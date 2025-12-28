@@ -1,0 +1,294 @@
+.account-wrapper {
+    width: 100%;
+    min-height: calc(var(--main-min-height) - 12px);
+    display: flex;
+    align-items: center;
+}
+
+.account-form {
+    background-color: var(--color-white);
+    padding: 24px;
+    border-radius: var(--radius-normal);
+    width: 100%;
+    max-width: 400px;
+    margin: 0 auto;
+}
+
+.account-form-heading {
+    font-size: 2rem;
+    font-weight: 600;
+    text-align: center;
+    margin-bottom: 12px;
+}
+
+.account-form-group {
+    margin-bottom: 12px;
+}
+
+.account-form-group.inline,
+.account-form-gender,
+.account-form-gender > label {
+    display: flex;
+    align-items: center;
+}
+
+.account-form-group.inline,
+.account-form-gender {
+    flex-wrap: wrap;
+}
+
+.account-form-group.inline > label,
+.account-form-gender > label {
+    margin-right: 24px;
+}
+
+.account-form-gender > label > input {
+    margin-right: 6px;
+}
+
+.account-form .button {
+    width: 100%;
+}
+
+.personal-wrapper {
+    display: grid;
+    grid-template-rows: auto auto;
+    gap: 12px;
+}
+
+.personal-card {
+    padding: 12px;
+    flex: 1px;
+    background-color: var(--color-white);
+    border-radius: var(--radius-normal);
+}
+
+.personal-card-heading {
+    font-size: 2rem;
+    font-weight: 600;
+    margin-bottom: 12px;
+}
+
+.personal-card-list-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    border-bottom: var(--border-normal);
+    padding: 12px 0;
+}
+
+.personal-card-list-item:first-child {
+    padding: 0 0 12px 0;
+}
+
+.personal-card-list-item:last-child {
+    border: none;
+    padding-bottom: 0;
+}
+
+.personal-card-list-item-tool {
+    gap: 12px;
+    font-size: 1.4rem;
+}
+
+.personal-card-list-item-tool .material-symbols-outlined {
+    font-size: 2rem;
+}
+
+.personal-card-list-item-tool .btn-edit-address,
+.personal-card-list-item-tool .delete,
+.personal-card-list-item-tool {
+    display: flex;
+    align-items: center;
+}
+
+.personal-card-list-item-tool .btn-edit-address,
+.personal-card-list-item-tool .delete {
+    cursor: pointer;
+    gap: 3px;
+}
+
+.personal-card-list-item-tool .btn-edit-address {
+    color: var(--color-primary);
+}
+
+.personal-card-list-item-tool .delete {
+    color: var(--color-danger);
+}
+
+.history-header,
+.history-body,
+.history-footer div,
+.history-header div,
+.history-body > div {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.history-header,
+.history-body {
+    justify-content: space-between;
+}
+
+.history-header {
+    border-bottom: var(--border-normal);
+    margin-bottom: 12px;
+    padding-bottom: 12px;
+}
+
+.history-header,
+.history-body,
+.history-header div {
+    flex-wrap: wrap;
+}
+
+.history-footer div {
+    justify-content: flex-end;
+}
+
+.history-footer div + div{
+    margin-top: 12px;
+}
+
+.history-header div b,
+.history-body div div b,
+.history-body div + b,
+.history-footer b {
+    font-weight: 600;
+}
+
+.history-header p {
+    color: var(--color-success);
+}
+
+.history-body div img {
+    width: 80px;
+    aspect-ratio: 1 / 1;
+    object-fit: contain;
+    border-radius: var(--radius-normal);
+    border: var(--border-normal);
+    padding: 6px;
+}
+
+.history-body {
+    border-bottom: var(--border-normal);
+    margin-bottom: 12px;
+    padding-bottom: 12px;
+}
+
+.history-footer b {
+    color: var(--color-danger);
+}
+
+.history-body-bottom {
+    border-bottom: var(--border-normal);
+    margin-bottom: 12px;
+    padding-bottom: 12px;
+}
+
+.history-body-bottom p + p {
+    margin-top: 6px;
+}
+
+#button-add-address {
+    background-color: var(--color-white);
+    border-style: dashed;
+    width: 100%;
+    color: var(--color-primary);
+    margin-top: 12px;
+    display: flex;
+    align-items: center;
+    gap: 3px;
+    justify-content: center;
+}
+
+#form-add-address {
+    display: none;
+    margin-top: 12px;
+    padding-top: 12px;
+    border-top: var(--border-normal);
+}
+
+.align-right {
+    display: flex;
+    justify-content: flex-end;
+    gap: 12px;
+    flex-wrap: wrap;
+}
+
+.personal-card .button {
+    width: 100px;
+}
+
+#button-save-profile,
+#button-cancel-edit-profile,
+#button-cancel-add-address {
+    display: none;
+}
+
+.button-cancel {
+    background-color: var(--color-button-light);
+    color: var(--color-text-normal);
+    opacity: 1 !important;
+    border: var(--border-normal);
+    justify-content: center;
+}
+
+.button-cancel:hover {
+    background-color: var(--color-button-light-hover);
+}
+
+.address-default {
+    color: var(--color-success);
+}
+
+.sidebar-list-button {
+  padding: 6px 12px;
+  display: flex;
+  cursor: pointer;
+  width: 100%;
+  color: var(--color-danger);
+}
+
+.sidebar-list-button:hover {
+  background-color: var(--color-sidebar-list-item-hover);
+}
+
+@media (max-width: 1440px) {
+    .personal-wrapper {
+        padding-right: 12px;
+    }
+}
+
+@media (max-width: 960px) {
+    .personal-wrapper {
+        padding-right: 0;
+    }
+}
+
+@media (max-width: 500px) {
+    .cart-item-row {
+        flex-wrap: wrap;
+    }
+
+    .history-body div + b {
+        width: 100%;
+        text-align: right;
+    }
+
+}
+
+@media (max-width: 400px) {
+    .personal-card .button {
+        width: 100%;
+    }
+
+    .history-body b {
+        display: -webkit-box;
+        -webkit-line-clamp: 3;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+}

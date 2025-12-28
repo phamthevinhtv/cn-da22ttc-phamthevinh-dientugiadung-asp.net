@@ -1,0 +1,6 @@
+@model int
+
+<a asp-controller="Cart" asp-action="Index" class="header-nav-top-list-link">
+    <span class="material-symbols-outlined">shopping_cart</span>
+    Giỏ hàng @(Model > 0 ? "(" + Model + ")" : "")
+</a>

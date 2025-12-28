@@ -1,0 +1,10 @@
+﻿namespace QL_DienTuGiaDung.Models
+{
+    public class LoaiSanPham
+    {
+        public int? MaLSP { get; set; }
+        public string? TenLSP { get; set; }
+        public decimal? ThueGTGTLSP { get; set; }
+        public int? TrangThaiLSP { get; set; }
+    }
+}

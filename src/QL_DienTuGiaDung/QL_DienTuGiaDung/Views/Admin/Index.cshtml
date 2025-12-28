@@ -1,0 +1,158 @@
+@model List<ThongKeDoanhThu>
+@{
+    ViewData["HideSidebar"] = false;
+    ViewData["SidebarName"] = "_SidebarAdmin";
+    ViewData["SidebarType"] = "PartialView";
+    var filter = ViewBag.Filter as ThongKeFilter;
+    var availableYears = ViewBag.AvailableYears as List<int>;
+    var tongDoanhThu = (decimal)ViewBag.TongDoanhThu;
+    var tongDonHang = (int)ViewBag.TongDonHang;
+    var tongSanPhamBan = (int)ViewBag.TongSanPhamBan;
+}
+
+@section Styles {
+    <link rel="stylesheet" href="~/css/admin.css" asp-append-version="true"/>
+}
+
+<div class="admin-product-wrapper">
+    <div class="admin-statistic-filter">
+        <form method="get" asp-action="Index" style="display: flex; gap: 12px; align-items: end; margin-bottom: 12px;">
+            <div class="admin-product-detail-form-group">
+                <label>Loại thống kê:</label>
+                <select name="loaiThongKe" class="select" onchange="toggleFilters()">
+                    <option value="nam">Theo năm</option>
+                    <option value="quy">Theo quý</option>
+                    <option value="thang">Theo tháng</option>
+                </select>
+            </div>
+            
+            <div class="admin-product-detail-form-group" id="yearFilter" style="display: none;">
+                <label>Năm:</label>
+                <select name="nam" class="select">
+                    @if (availableYears != null)
+                    {
+                        @foreach (var year in availableYears)
+                        {
+                            <option value="@year">@year</option>
+                        }
+                    }
+                </select>
+            </div>
+            
+            <div class="admin-product-detail-form-group" id="quarterFilter" style="display: none;">
+                <label>Quý:</label>
+                <select name="quy" class="select">
+                    <option value="1">Quý 1</option>
+                    <option value="2">Quý 2</option>
+                    <option value="3">Quý 3</option>
+                    <option value="4">Quý 4</option>
+                </select>
+            </div>
+            
+            <button type="submit" class="button">Lọc</button>
+        </form>
+    </div>
+
+    <div class="admin-statistic-summary" style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-bottom: 12px;">
+        <div class="summary-card" style="background: #ffffff; padding: 12px; border-radius: 4px; text-align: center;">
+            <h4 style="margin: 0 0 10px 0; color: #28a745;">Tổng doanh thu</h4>
+            <p style="font-size: 2rem; font-weight: 600; margin: 0; color: #28a745;">@tongDoanhThu.ToString("N0") VNĐ</p>
+        </div>
+        <div class="summary-card" style="background: #ffffff; padding: 12px; border-radius: 4px; text-align: center;">
+            <h4 style="margin: 0 0 10px 0; color: #007bff;">Tổng đơn hàng</h4>
+            <p style="font-size: 2rem; font-weight: 600; margin: 0; color: #007bff;">@tongDonHang</p>
+        </div>
+        <div class="summary-card" style="background: #ffffff; padding: 12px; border-radius: 4px; text-align: center;">
+            <h4 style="margin: 0 0 10px 0; color: #ffc107;">Sản phẩm bán</h4>
+            <p style="font-size: 2rem; font-weight: 600; margin: 0; color: #ffc107;">@tongSanPhamBan</p>
+        </div>
+    </div>
+
+    @if (Model.Count > 0)
+    {
+        <table class="admin-table">
+            <thead>
+                <tr>
+                    @if (filter?.LoaiThongKe == "nam")
+                    {
+                        <th>Năm</th>
+                    }
+                    else if (filter?.LoaiThongKe == "quy")
+                    {
+                        <th>Quý</th>
+                    }
+                    else if (filter?.LoaiThongKe == "thang")
+                    {
+                        <th>Tháng</th>
+                    }
+                    <th>Doanh thu</th>
+                    <th>Số đơn hàng</th>
+                    <th>Sản phẩm bán</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in Model)
+                {
+                    <tr>
+                        @if (filter?.LoaiThongKe == "nam")
+                        {
+                            <td>@item.Nam</td>
+                        }
+                        else if (filter?.LoaiThongKe == "quy")
+                        {
+                            <td>Quý @item.Quy</td>
+                        }
+                        else if (filter?.LoaiThongKe == "thang")
+                        {
+                            <td>Tháng @item.Thang/@item.Nam</td>
+                        }
+                        <td style="color: #28a745; font-weight: bold;">@item.DoanhThu.ToString("N0") VNĐ</td>
+                        <td>@item.SoDonHang</td>
+                        <td>@item.SoSanPhamBan</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    }
+    else
+    {
+        <p>Không có dữ liệu thống kê cho khoảng thời gian đã chọn</p>
+    }
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const loaiThongKeSelect = document.querySelector('select[name="loaiThongKe"]');
+    const namSelect = document.querySelector('select[name="nam"]');
+    const quySelect = document.querySelector('select[name="quy"]');
+    
+    if ('@filter?.LoaiThongKe' !== '') {
+        loaiThongKeSelect.value = '@filter?.LoaiThongKe';
+    }
+    if ('@filter?.Nam' !== '') {
+        namSelect.value = '@filter?.Nam';
+    }
+    if ('@filter?.Quy' !== '') {
+        quySelect.value = '@filter?.Quy';
+    }
+    
+    toggleFilters();
+});
+
+function toggleFilters() {
+    const loaiThongKe = document.querySelector('select[name="loaiThongKe"]').value;
+    const yearFilter = document.getElementById('yearFilter');
+    const quarterFilter = document.getElementById('quarterFilter');
+    
+    if (loaiThongKe === 'nam') {
+        yearFilter.style.display = 'none';
+        quarterFilter.style.display = 'none';
+    } else if (loaiThongKe === 'quy') {
+        yearFilter.style.display = 'block';
+        quarterFilter.style.display = 'none';
+    } else if (loaiThongKe === 'thang') {
+        yearFilter.style.display = 'block';
+        quarterFilter.style.display = 'block';
+    }
+}
+</script>

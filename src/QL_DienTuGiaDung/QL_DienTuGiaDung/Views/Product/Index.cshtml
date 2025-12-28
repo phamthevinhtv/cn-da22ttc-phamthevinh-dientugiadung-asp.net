@@ -1,0 +1,129 @@
+﻿@using System.Globalization;
+
+@model List<SanPhamKhachHang>
+
+@{
+    ViewData["Title"] = "Tất cả sản phẩm";
+    ViewData["SidebarName"] = "SiderbarProductType";
+    ViewData["SidebarType"] = "ViewComponent";
+    var error = TempData["Error"] as string;
+
+    int pageSize = 10;
+    var page = Context.Request.Query["page"];
+    int currentPage = 1;
+
+    if (!string.IsNullOrEmpty(page))
+    {
+        currentPage = int.Parse(page!);
+    }
+
+    var pageProducts = Model
+    .Skip((currentPage - 1) * pageSize)
+    .Take(pageSize)
+    .ToList();
+
+    int totalPage = (int)Math.Ceiling((double)Model.Count / pageSize);
+
+    int startPage = Math.Max(2, currentPage - 1);
+    int endPage = Math.Min(totalPage - 1, currentPage + 1);
+
+    if (startPage >= endPage && endPage < totalPage - 1)
+    {
+        endPage = startPage + 1;
+    }
+}
+
+@section Styles {
+    <link rel="stylesheet" href="~/css/product.css" asp-append-version="true"/>
+}
+
+@if (pageProducts.Count > 0)
+{
+    <div class="main-products">
+        @foreach (var product in pageProducts)
+        {
+            <a asp-controller="Product" asp-action="Detail" onclick="@(product.SoLuongSP <= 0 ? "return false;" : "")" asp-route-id="@product.MaSP" class="main-product-item">
+                @if (product.SoLuongSP <= 0)
+                {
+                    <div class="main-product-item-out">
+                        <p>Hết hàng</p>
+                    </div> 
+                }
+                <img src="@(string.IsNullOrWhiteSpace(product.UrlAnh) ? "/images/no_img.png" : product.UrlAnh)" alt="Ảnh sản phẩm">
+                <h3 class="main-product-item-title">@product.TenSP</h3>
+                <div class="main-product-item-row">
+                    @if (product.MucGiamGiaSP > 0)
+                    {
+                        <del class="main-product-item-original-price">@product.GiaGocSauThue?.ToString("N0", new CultureInfo("vi-VN"))</del>
+                        <span class="main-product-item-discount-level">-@product.MucGiamGiaSP?.ToString("N0")%</span>
+                    }
+
+                </div>
+                <div class="main-product-item-row">
+                    <span class="main-product-item-discount-price">@product.GiaSauGiamVaThue?.ToString("N0", new CultureInfo("vi-VN"))</span>
+                </div>
+                <div class="main-product-item-row">
+                    <span class="main-product-item-core-review">
+                        @if (@product.DiemTrungBinh > 0)
+                        {
+                            <span class="material-symbols-outlined">star</span>
+                            <span>@product.DiemTrungBinh?.ToString("N1")</span>
+                        }
+                    </span>
+                    @if (@product.SoLuongDaBan > 0)
+                    {
+                        <span class="main-product-item-sold">Đã bán @product.SoLuongDaBan</span>
+                    }
+                </div>
+            </a>
+        }
+    </div>
+
+    <div class="main-pagination">
+        @if (currentPage > 1)
+        {
+            <a asp-controller="Product" asp-action="Index" asp-route-page="@(currentPage - 1)">
+                <span class="material-symbols-outlined">keyboard_arrow_left</span>
+            </a>
+        }
+
+        <a class="@(currentPage == 1 ? "active" : "")" asp-controller="Product" asp-action="Index" asp-route-page="1">1</a>
+
+        @if (currentPage - 1 > 2)
+        {
+            <span>. . .</span>
+        }
+
+        @for (int i = startPage; i <= endPage; i++)
+        {
+            <a class="@(i == currentPage ? "active" : "")" asp-controller="Product" asp-action="Index" asp-route-page="@i">@i</a>
+        }
+
+        @if (totalPage > 4 && currentPage < totalPage - 2)
+        {
+            <span>. . .</span>
+        }
+
+        @if (totalPage > 1)
+        {
+            <a class="@(totalPage == currentPage ? "active" : "")" asp-controller="Product" asp-action="Index" asp-route-page="@totalPage">@totalPage</a>
+        }
+
+        @if (currentPage < totalPage)
+        {
+            <a asp-controller="Product" asp-action="Index" asp-route-page="@(currentPage + 1)">
+                <span class="material-symbols-outlined">keyboard_arrow_right</span>
+            </a>
+        }
+    </div>
+} else
+{
+    <p>Danh sách sản phẩm hiện đang trống</p>
+}
+
+@if (!string.IsNullOrEmpty(error))
+{
+    <script>
+         alert('@Html.Raw(error)');
+    </script>
+}

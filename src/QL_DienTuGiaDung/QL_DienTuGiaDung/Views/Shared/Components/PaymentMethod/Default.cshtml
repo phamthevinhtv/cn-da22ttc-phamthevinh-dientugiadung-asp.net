@@ -1,0 +1,18 @@
+@model List<PhuongThucThanhToan>
+
+@if (Model != null && Model.Any())
+{
+    <ul class="payment-method-list">
+        @for (int i = 0; i < Model.Count; i++)
+        {
+            var pttt = Model[i];
+            var id = $"pttt_{pttt.MaPTTT}";
+            <li>
+                <label for="@id">
+                    <input type="radio" id="@id" name="MaPTTT" value="@pttt.MaPTTT" @(i == 0 ? "checked" : "") />
+                    @pttt.TenPTTT
+                </label>
+            </li>
+        }
+    </ul>
+}

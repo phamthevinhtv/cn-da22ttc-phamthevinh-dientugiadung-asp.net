@@ -1,0 +1,65 @@
+@model QL_DienTuGiaDung.Models.TaiKhoan
+@{
+    ViewData["HideSidebar"] = false;
+    ViewData["SidebarName"] = "_SidebarAdminPersonal";
+    ViewData["SidebarType"] = "PartialView";
+    var message = TempData["Message"] as string;
+    var error = TempData["Error"] as string;
+}
+
+@section Styles {
+    <link rel="stylesheet" href="~/css/account.css" asp-append-version="true"/>
+}
+
+<div class="personal-wrapper">
+    <div class="personal-card">
+        <h3 class="personal-card-heading">Thông tài khoản</h3>
+        <form method="post" asp-action="HandleUpdateTenTK">
+            <div class="account-form-group">
+                <label asp-for="TenTK">Tên đăng nhập:</label>
+                <input class="input input-disabled" type="text" asp-for="TenTK" disabled required placeholder="Nhập tên đăng nhập">
+            </div>
+            <div class="align-right">
+                <div class="button button-cancel" id="button-cancel-edit-profile">Hủy</div>
+                <button class="button" id="button-save-profile" type="submit">Lưu</button>
+            </div>
+        </form>
+        <div class="align-right">
+            <button class="button" id="button-edit-profile">Sửa</button>
+        </div>
+    </div>
+    <div class="personal-card">
+        <h3 class="personal-card-heading">Đổi mật khẩu</h3>
+        <form method="post" asp-action="HandleChangePassword" id="form-change-password">
+            <div class="account-form-group">
+                <label asp-for="MatKhauTK">Mật khẩu mới:</label>
+                <input class="input" type="password" minlength="6" asp-for="MatKhauTK" id="input-password" required placeholder="Nhập mật khẩu mới">
+            </div>
+            <div class="account-form-group">
+                <label for="confirm-password">Xác nhận mật khẩu mới:</label>
+                <input class="input" type="password" minlength="6" id="confirm-password" required placeholder="Nhập lại mật khẩu mới">
+            </div>
+            <div class="align-right">
+                <button class="button">Lưu</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+@section Scripts {
+    <script src="~/js/account.js" asp-append-version="true"></script>
+}
+
+@if (!string.IsNullOrEmpty(message))
+{
+    <script>
+        alert('@Html.Raw(message)');
+    </script>
+}
+
+@if (!string.IsNullOrEmpty(error))
+{
+    <script>
+        alert('@Html.Raw(error)');
+    </script>
+}

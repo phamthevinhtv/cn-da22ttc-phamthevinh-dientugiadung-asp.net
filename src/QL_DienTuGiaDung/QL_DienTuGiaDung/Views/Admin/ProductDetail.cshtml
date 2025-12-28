@@ -1,0 +1,296 @@
+@using System.Globalization
+@using System.IO
+@model SanPham
+@{
+    ViewData["HideSidebar"] = false;
+    ViewData["SidebarName"] = "_SidebarAdmin";
+    ViewData["SidebarType"] = "PartialView";
+    int? productTypeId = ViewBag.ProductTypeId;
+    var message = TempData["Message"] as string;
+    var error = TempData["Error"] as string;
+}
+
+@section Styles {
+    <link rel="stylesheet" href="~/css/admin.css" asp-append-version="true"/>
+}
+
+<div class="admin-product-detail-wrapper">
+    <form asp-action="ProductDetail" method="post" id="admin-product-detail-form">
+        <input type="hidden" asp-for="MaSP" />
+        <input type="hidden" asp-for="MaLSP" />
+        <h3>@(Model.MaSP == 0 ? "Thêm sản phẩm" : "Chi tiết sản phẩm")</h3>
+        <div class="admin-product-detail-form-row row1">
+            <div class="admin-product-detail-form-group">
+                <label asp-for="TenSP">Tên sản phẩm:</label>
+                <input class="input" type="text" asp-for="TenSP" required placeholder="Nhập tên sản phẩm">
+            </div>
+            <div class="admin-product-detail-form-group">
+                <label asp-for="MaQG">Nước sản xuất:</label>
+                <select asp-for="MaQG" class="select">
+                    <option value="">-- Chọn quốc gia --</option>
+                    @if (ViewBag.QuocGia != null)
+                    {
+                        @foreach (var item in (List<QuocGia>)ViewBag.QuocGia)
+                        {
+                            <option value="@item.MaQG">@item.TenQG</option>
+                        }
+                    }
+                </select>
+            </div>
+            <div class="admin-product-detail-form-group">
+                <label asp-for="MaTH">Thương hiệu:</label>
+                <select asp-for="MaTH" class="select">
+                    <option value="">-- Chọn thương hiệu --</option>
+                    @if (ViewBag.ThuongHieu != null)
+                    {
+                        @foreach (var item in (List<ThuongHieu>)ViewBag.ThuongHieu)
+                        {
+                            <option value="@item.MaTH">@item.TenTH</option>
+                        }
+                    }
+                </select>
+            </div>
+            <div class="admin-product-detail-form-group">
+                <label asp-for="TrangThaiSP">Trạng thái:</label>
+                <select asp-for="TrangThaiSP" class="select">
+                    <option value="0">Dừng bán</option>
+                    <option value="1">Đang bán</option>
+                </select>
+            </div>
+        </div>
+        <div class="admin-product-detail-form-row row2">
+            <div class="admin-product-detail-form-group">
+                <label asp-for="NamSanXuatSP">Năm sản xuất:</label>
+                <input class="input" type="number" min="0" required asp-for="NamSanXuatSP" placeholder="Nhập năm sản xuất">
+            </div>
+            <div class="admin-product-detail-form-group">
+                <label asp-for="SoLuongSP">Số lượng:</label>
+                <input class="input" type="number" min="0" value="@Model.SoLuongSP" asp-for="SoLuongSP" required placeholder="Nhập số lượng">
+            </div>
+            <div class="admin-product-detail-form-group">
+                <label asp-for="GiaNhapSP">Giá nhập:</label>
+                <input class="input" type="number" min="0" value="@Model.GiaNhapSP" asp-for="GiaNhapSP" required placeholder="Nhập giá nhập">
+            </div>
+            <div class="admin-product-detail-form-group">
+                <label asp-for="GiaGocSP">Giá niêm yết:</label>
+                <input class="input" type="number" min="0" value="@Model.GiaGocSP" asp-for="GiaGocSP" required placeholder="Nhập giá niêm yết">
+            </div>
+            <div class="admin-product-detail-form-group">
+                <label asp-for="MucGiamGiaSP">Mức giảm giá:</label>
+                <input class="input" type="number" min="0" max="100" value="@Model.MucGiamGiaSP.ToString("N0")" asp-for="MucGiamGiaSP" required placeholder="Nhập mức giảm giá (%)">
+            </div>
+            <div class="admin-product-detail-form-group">
+                <label asp-for="NgayHetGiamGiaSP">Hạn giảm giá:</label>
+                <input class="input" type="datetime-local" asp-for="NgayHetGiamGiaSP">
+            </div>
+        </div>
+        <div class="admin-product-detail-form-row row3">
+            <div class="admin-product-detail-form-group">
+                <label asp-for="KichThuocSP">Kích thước:</label>
+                <textarea class="input" rows="1" asp-for="KichThuocSP" placeholder="Nhập kích thước"></textarea>
+            </div>
+            <div class="admin-product-detail-form-group">
+                <label asp-for="KhoiLuongSP">Khối lượng:</label>
+                <textarea class="input" rows="1" asp-for="KhoiLuongSP" placeholder="Nhập khối lượng"></textarea>
+            </div>
+            <div class="admin-product-detail-form-group">
+                <label asp-for="CongSuatTieuThu">Công suất tiêu thụ:</label>
+                <textarea class="input" rows="1" asp-for="CongSuatTieuThu" placeholder="Nhập công suất tiêu thụ"></textarea>
+            </div>
+            <div class="admin-product-detail-form-group">
+                <label asp-for="PhanLoaiSP">Phân loại:</label>
+                <textarea class="input" rows="1" asp-for="PhanLoaiSP" placeholder="Nhập phân loại"></textarea>
+            </div>
+        </div>
+        <div class="admin-product-detail-form-row row4">
+            <div class="admin-product-detail-form-group">
+                <label asp-for="BaoHanhSP">Thời gian bảo hành:</label>
+                <textarea class="input" rows="1" asp-for="BaoHanhSP" placeholder="Nhập thời gian bảo hành"></textarea>
+            </div>
+            <div class="admin-product-detail-form-group">
+                <label asp-for="ChatLieuSP">Chất liệu:</label>
+                <textarea class="input" rows="1" asp-for="ChatLieuSP" placeholder="Nhập chất liệu"></textarea>
+            </div>
+            <div class="admin-product-detail-form-group">
+                <label asp-for="TienIchSP">Tiện ích:</label>
+                <textarea class="input" rows="1" asp-for="TienIchSP" placeholder="Nhập tiện ích"></textarea>
+            </div>
+            <div class="admin-product-detail-form-group">
+                <label asp-for="CongNgheSP">Công nghệ:</label>
+                <textarea class="input" rows="1" asp-for="CongNgheSP" placeholder="Nhập công nghệ"></textarea>
+            </div>
+        </div>
+        @if (productTypeId.HasValue)
+        {
+            @switch (productTypeId.Value)
+            {
+                case 1:
+                    @if (Model.MayLanh != null)
+                    {
+                        @await Html.PartialAsync("Partials/_DetailMayLanh", Model.MayLanh)
+                    }
+                    break;
+                case 2:
+                    @if (Model.TuLanh != null)
+                    {
+                        @await Html.PartialAsync("Partials/_DetailTuLanh", Model.TuLanh)
+                    }
+                    break;
+                case 3:
+                    @if (Model.MayLocKhongKhi != null)
+                    {
+                        @await Html.PartialAsync("Partials/_DetailMayLocKhongKhi", Model.MayLocKhongKhi)
+                    }
+                    break;
+                case 4:
+                    @if (Model.MayLocNuoc != null)
+                    {
+                        @await Html.PartialAsync("Partials/_DetailMayLocNuoc", Model.MayLocNuoc)
+                    }
+                    break;
+                case 5:
+                    @if (Model.MayRuaChen != null)
+                    {
+                        @await Html.PartialAsync("Partials/_DetailMayRuaChen", Model.MayRuaChen)
+                    }
+                    break;
+                case 6:
+                    @if (Model.NoiComDien != null)
+                    {
+                        @await Html.PartialAsync("Partials/_DetailNoiComDien", Model.NoiComDien)
+                    }
+                    break;
+                case 7:
+                    @if (Model.NoiChien != null)
+                    {
+                        @await Html.PartialAsync("Partials/_DetailNoiChien", Model.NoiChien)
+                    }
+                    break;
+                case 8:
+                    @if (Model.TiVi != null)
+                    {
+                        @await Html.PartialAsync("Partials/_DetailTiVi", Model.TiVi)
+                    }
+                    break;
+            }
+        }
+        <button type="submit" class="button button-submit">Lưu</button>
+    </form>
+
+    @if (Model.MaSP > 0)
+    {
+        <div class="admin-product-images-section" style="margin-top: 12px;">
+            <h3>Quản lý ảnh sản phẩm</h3>
+            <div class="add-image-form" style="background: #ffffff; padding: 12px; border-radius: 4px; margin-bottom: 12px;">
+                <form asp-action="AddProductImage" method="post" enctype="multipart/form-data" style="display: flex; gap: 12px; align-items: end;">
+                    <input type="hidden" name="productId" value="@Model.MaSP" />
+                    <input type="hidden" name="productTypeId" value="@Model.MaLSP" />
+                    <div style="flex: 1;">
+                        <label>Chọn file ảnh:</label>
+                        <input type="file" name="imageFile" class="input" accept="image/*" required 
+                               style="padding: 0" 
+                               onchange="previewImage(this)" />
+                        <div id="imagePreview" style="margin-top: 10px; display: none;">
+                            <img id="previewImg" style="max-width: 200px; max-height: 150px; border-radius: 4px; border: 1px solid #ddd;" />
+                        </div>
+                    </div>
+                    <div>
+                        <label style="display: flex; align-items: center; gap: 5px;">
+                            <input type="checkbox" name="isDefault" value="true" /> Đặt làm ảnh mặc định
+                        </label>
+                    </div>
+                    <button type="submit" class="button">Tải lên</button>
+                </form>
+            </div>
+
+            <div class="images-list">
+                <h4>Danh sách ảnh</h4>
+                @if (ViewBag.ProductImages != null && ((List<Anh>)ViewBag.ProductImages).Count > 0)
+                {
+                    <div class="images-grid" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 12px;">
+                        @foreach (var image in (List<Anh>)ViewBag.ProductImages)
+                        {
+                            <div class="image-item" style="border: var(--border-normal); border-radius: 4px; padding: 12px; background: white;">
+                                <div class="image-preview" style="text-align: center; margin-bottom: 12px;">
+                                    <img src="@image.UrlAnh" alt="Ảnh sản phẩm" style="max-width: 100%; height: 100px; object-fit: cover; border-radius: 4px;" 
+                                         onerror="this.src='/images/no_img.png'" />
+                                </div>
+                                <div class="image-info" style="font-size: 1.4rem; color: #666; margin-bottom: 6px;">
+                                    @if (image.MacDinhAnh == 1)
+                                    {
+                                        <div style="color: #28a745;">Ảnh mặc định</div>
+                                    }
+                                </div>
+                                <div class="image-actions" style="display: grid; gap: 6px;">
+                                    @if (image.MacDinhAnh != 1)
+                                    {
+                                        <form asp-action="SetDefaultImage" method="post" style="flex: 1;">
+                                            <input type="hidden" name="imageId" value="@image.MaAnh" />
+                                            <input type="hidden" name="productId" value="@Model.MaSP" />
+                                            <input type="hidden" name="productTypeId" value="@Model.MaLSP" />
+                                            <button type="submit" class="button" style="width: 100%; font-size: 1.4rem; padding: 6px;">Đặt mặc định</button>
+                                        </form>
+                                    }
+                                    <form asp-action="DeleteProductImage" method="post" style="flex: 1;" 
+                                          onsubmit="return confirm('Bạn có chắc muốn xóa ảnh này?')">
+                                        <input type="hidden" name="imageId" value="@image.MaAnh" />
+                                        <input type="hidden" name="productId" value="@Model.MaSP" />
+                                        <input type="hidden" name="productTypeId" value="@Model.MaLSP" />
+                                        <button type="submit" class="button button-delete" style="width: 100%; background: var(--color-danger); border-color: var(--color-danger); font-size: 1.4rem; padding: 6px;">Xóa</button>
+                                    </form>
+                                </div>
+                            </div>
+                        }
+                    </div>
+                }
+                else
+                {
+                    <p>Chưa có ảnh nào. Hãy thêm ảnh đầu tiên cho sản phẩm.</p>
+                }
+            </div>
+        </div>
+    }
+    else
+    {
+        <div style="margin-top: 12px;">
+            <p>
+                <i>Lưu sản phẩm trước để có thể thêm ảnh</i>
+            </p>
+        </div>
+    }
+</div>
+
+
+@if (!string.IsNullOrEmpty(message))
+{
+    <script>
+        alert('@Html.Raw(message)');
+    </script>
+}
+
+@if (!string.IsNullOrEmpty(error))
+{
+    <script>
+        alert('@Html.Raw(error)');
+    </script>
+}
+
+<script>
+    function previewImage(input) {
+        const preview = document.getElementById('imagePreview');
+        const previewImg = document.getElementById('previewImg');
+        
+        if (input.files && input.files[0]) {
+            const reader = new FileReader();
+            
+            reader.onload = function(e) {
+                previewImg.src = e.target.result;
+                preview.style.display = 'block';
+            }
+            
+            reader.readAsDataURL(input.files[0]);
+        } else {
+            preview.style.display = 'none';
+        }
+    }
+</script>

@@ -1,0 +1,84 @@
+@using System.Globalization
+@model List<DonHang>
+
+@{
+    ViewData["HideSidebar"] = false;
+    ViewData["SidebarName"] = "_SidebarPersonal";
+    ViewData["SidebarType"] = "PartialView";
+    var message = TempData["Message"] as string;
+    var error = TempData["Error"] as string;
+}
+
+@section Styles {
+    <link rel="stylesheet" href="~/css/account.css" asp-append-version="true"/>
+}
+
+<div class="personal-wrapper">
+    @if (Model.Count > 0) {
+        foreach(var order in Model) {
+            <div class="personal-card">
+                <div class="history-header">
+                    <div>
+                        <b>Đơn hàng VE@(order.MaDH)</b>
+                        <span>Đặt lúc @order.NgayTaoDH.ToString("HH:mm - dd/MM/yyyy")</span>
+                    </div>
+                    <p>@order.TenTTDH (@order.NgayCapNhatDH.ToString("HH:mm - dd/MM/yyyy"))</p>
+                </div> 
+                @foreach (var product in order.ListSanPhamDatHang) {
+                    <div class="history-body">
+                        <div>
+                            <img src="@(string.IsNullOrWhiteSpace(product.UrlAnh) ? "/images/no_img.png" : product.UrlAnh)" alt="Ảnh sản phẩm">
+                            <div>
+                                <b>@product.TenSP</b>
+                                <p>(@product.SoLuongDat sản phẩm)</p>
+                            </div>
+                        </div>
+                        <b>@product.GiaDatSauGiamVaThue?.ToString("N0", new CultureInfo("vi-VN"))</b>
+                    </div> 
+                }
+                <div class="history-body-bottom">
+                    <p>Địa chỉ nhận hàng: @order.TenDCCT, @order.TenXP, @order.TenTTP</p>
+                    <p>Phương thức thành toán: @order.TenPTTT</p>
+                </div>
+                <div class="history-footer">
+                    <div>
+                        <p>Phí giao hàng:</p>
+                        <b>@(order.PhiVanChuyenDH > 0 ? order.PhiVanChuyenDH.ToString("N0", new CultureInfo("vi-VN")) : "Miễn phí")</b>
+                    </div>
+                    <div>
+                        <p>Tổng tiền:</p>
+                        <b>@order.TongTienDH.ToString("N0", new CultureInfo("vi-VN"))</b>
+                    </div>
+                    <div style="color: var(--color-primary);">
+                        @order.TenTTTT (@order.NgayCapNhatTT.ToString("HH:mm - dd/MM/yyyy"))
+                    </div>
+                    @if(order.MaTTDH == 1) {
+                        <div>
+                            <form action="HandleCancelOrder" method="post" onsubmit="return confirm(`Bạn có chắc chắn muốn hủy đơn hàng VE@(order.MaDH) không`)">
+                                <input type="hidden" name="MaDH" value="@order.MaDH">
+                                <button class="button" style="background-color: var(--color-danger); border-color: var(--color-danger);">Hủy</button>
+                            </form>
+                        </div>
+                    }
+                </div> 
+            </div>
+        }
+    } else {
+        <p>Hiện không có đơn hàng nào</p>
+    }
+</div>
+
+
+@if (!string.IsNullOrEmpty(message))
+{
+    <script>
+        alert('@Html.Raw(message)');
+    </script>
+}
+
+@if (!string.IsNullOrEmpty(error))
+{
+    <script>
+        alert('@Html.Raw(error)');
+    </script>
+}

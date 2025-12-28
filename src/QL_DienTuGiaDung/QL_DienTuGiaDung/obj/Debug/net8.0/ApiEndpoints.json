@@ -1,0 +1,28 @@
+[
+  {
+    "ContainingType": "CallAPIController",
+    "Method": "GetProvinces",
+    "RelativePath": "api/provinces",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "CallAPIController",
+    "Method": "GetCommunes",
+    "RelativePath": "api/provinces/{provinceCode}/communes",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "provinceCode",
+        "Type": "System.String",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  }
+]

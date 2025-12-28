@@ -1,0 +1,13 @@
+@model List<LoaiSanPham>
+
+<aside id="sidebar">
+    <h3 class="sidebar-heading">Danh mục</h3>
+    <ul class="sidebar-list">
+        @foreach (var productType in Model)
+        {
+            <li class="sidebar-list-item">
+                <a asp-controller="Product" asp-action="Index" asp-route-productTypeId="@productType.MaLSP" class="sidebar-list-link">@productType.TenLSP</a>
+            </li>
+        }
+    </ul> 
+</aside>

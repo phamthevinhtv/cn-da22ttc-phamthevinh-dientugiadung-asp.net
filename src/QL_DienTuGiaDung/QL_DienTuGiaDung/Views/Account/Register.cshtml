@@ -1,0 +1,68 @@
+﻿@model QL_DienTuGiaDung.Models.TaiKhoanKhachHang;
+
+@{
+    ViewData["HideSidebar"] = true;
+    var message = TempData["Message"] as string;
+}
+
+@section Styles {
+    <link rel="stylesheet" href="~/css/account.css" asp-append-version="true" />
+}
+
+<div class="account-wrapper">
+    <div class="account-form">
+        <h3 class="account-form-heading">Đăng ký thông tin khách hàng</h3>
+        <form method="post" asp-action="HandleRegister">
+            <div class="account-form-group">
+                <label asp-for="TenKH">Họ tên:</label>
+                <input class="input" type="text" asp-for="TenKH" required placeholder="Nhập họ và tên">
+            </div>
+            <div class="account-form-group">
+                <label asp-for="EmailKH">Email:</label>
+                <input class="input" type="email" asp-for="EmailKH" placeholder="Nhập email (không bắt buộc)">
+            </div>
+            <div class="account-form-group inline">
+                <label asp-for="GioiTinhKH">Giới tính:</label>
+                <div class="account-form-gender">
+                    <label>
+                        <input type="radio" asp-for="GioiTinhKH" required value="1"> Nam
+                    </label>
+                    <label>
+                        <input type="radio" asp-for="GioiTinhKH" value="-1"> Nữ
+                    </label>
+                    <label>
+                        <input type="radio" asp-for="GioiTinhKH" value="0"> Khác
+                    </label>
+                </div>
+            </div>
+            <div class="account-form-group">
+                <label for="provinceSelect">Tỉnh/Thành Phố</label>
+                <select class="select" id="provinceSelect" name="provinceSelect" required>
+                    <option value="">-- Chọn Tỉnh/Thành phố --</option>
+                </select>
+            </div>
+            <div class="account-form-group">
+                <label for="communeSelect">Xã/Phường</label>
+                <select class="select" id="communeSelect" name="communeSelect" required>
+                    <option value="">-- Chọn Xã/Phường --</option>
+                </select>
+            </div>
+            <div class="account-form-group">
+                <label asp-for="DiaChiCuThe.TenDCCT">Số nhà, tên đường, ấp/khóm</label>
+                <input class="input" type="text" asp-for="DiaChiCuThe.TenDCCT" required placeholder="Nhập số nhà, tên đường, ấp/khóm">
+            </div>
+            <button class="button">Đăng ký</button>
+        </form>
+    </div>
+</div>
+
+@section Scripts {
+    <script src="~/js/account.js" asp-append-version="true"></script>
+}
+
+@if (!string.IsNullOrEmpty(message))
+{
+    <script>
+        alert('@Html.Raw(message)');
+    </script>
+}

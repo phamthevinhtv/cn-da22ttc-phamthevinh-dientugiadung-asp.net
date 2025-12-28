@@ -1,0 +1,75 @@
+@model List<QuocGia>
+@{
+    ViewData["HideSidebar"] = false;
+    ViewData["SidebarName"] = "_SidebarAdmin";
+    ViewData["SidebarType"] = "PartialView";
+    var message = TempData["Message"] as string;
+    var error = TempData["Error"] as string;
+}
+
+@section Styles {
+    <link rel="stylesheet" href="~/css/admin.css" asp-append-version="true"/>
+}
+
+<div class="admin-product-wrapper">
+    <div style="display: flex; justify-content: end; align-items: center; margin-bottom: 12px; gap: 12px;">
+        <a asp-action="CountryDetail" asp-controller="Admin" class="button">Thêm quốc gia</a>
+    </div>
+
+    @if (Model.Count > 0)
+    {
+        <table class="admin-table">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Tên quốc gia</th>
+                    <th>Thao tác</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var country in Model)
+                { 
+                    <tr>
+                        <td>@country.MaQG</td>
+                        <td>@country.TenQG</td>
+                        <td>
+                            <div class="actions">
+                                <a asp-action="CountryDetail" asp-controller="Admin" asp-route-id="@country.MaQG" class="button button-edit">Sửa</a>
+                                @{
+                                    var canDeleteCountries = ViewBag.CanDeleteCountries as Dictionary<int, bool>;
+                                    bool canDelete = canDeleteCountries?.ContainsKey(country.MaQG) == true && canDeleteCountries[country.MaQG];
+                                }
+                                @if (canDelete)
+                                {
+                                    <form asp-action="DeleteCountry" asp-controller="Admin" method="post" style="display: inline;" 
+                                          onsubmit="return confirm('Bạn có chắc muốn xóa quốc gia này?')">
+                                        <input type="hidden" name="id" value="@country.MaQG" />
+                                        <button type="submit" class="button button-delete">Xóa</button>
+                                    </form>
+                                }
+                            </div>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    } 
+    else
+    {
+        <p>Danh sách quốc gia hiện đang trống</p>
+    }
+</div>
+
+@if (!string.IsNullOrEmpty(message))
+{
+    <script>
+        alert('@Html.Raw(message)');
+    </script>
+}
+
+@if (!string.IsNullOrEmpty(error))
+{
+    <script>
+        alert('@Html.Raw(error)');
+    </script>
+}

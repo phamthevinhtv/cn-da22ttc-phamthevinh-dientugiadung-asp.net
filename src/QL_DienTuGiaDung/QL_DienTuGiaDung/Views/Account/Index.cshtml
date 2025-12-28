@@ -1,0 +1,28 @@
+﻿@{
+    ViewData["HideSidebar"] = true;
+    var error = TempData["Error"] as string;
+}
+
+@section Styles {
+    <link rel="stylesheet" href="~/css/account.css" asp-append-version="true"/>
+}
+
+<div class="account-wrapper">
+    <div class="account-form">
+        <h3 class="account-form-heading">Xác minh số điện thoại</h3>
+        <form method="post" asp-action="HandlePhone">
+            <div class="account-form-group">
+                <label id="phone">Số điện thoại:</label>
+                <input class="input" type="tel" pattern="0[0-9]{9}" id="phone" name="phone" required placeholder="Nhập số điện thoại của bạn">
+            </div>
+            <button class="button">Xác minh</button>
+        </form>
+    </div>
+</div>
+
+@if (!string.IsNullOrEmpty(error))
+{
+    <script>
+         alert('@Html.Raw(error)');
+    </script>
+}

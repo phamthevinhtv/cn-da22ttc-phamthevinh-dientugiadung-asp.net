@@ -1,0 +1,175 @@
+@using System.Globalization
+@model ChiTietSanPhamKhachHang;
+
+@{
+    ViewData["HideSidebar"] = true;
+    var error = TempData["Error"] as string;
+    var message = TempData["Message"] as string;
+}
+
+@section Styles {
+    <link rel="stylesheet" href="~/css/product.css" asp-append-version="true"/>
+}
+
+<div class="product-detail-wrapper">
+    <div class="product-image-slider"
+        data-images='@Html.Raw(System.Text.Json.JsonSerializer.Serialize(
+            Model.ListAnh?.Select(x => x.UrlAnh)))'>
+        <button class="product-image-slider-nav left">❮</button>
+        <img id="sliderImage" src="@Model.ListAnh?.FirstOrDefault()?.UrlAnh" alt="@Model.TenSP" />
+        <button class="product-image-slider-nav right">❯</button>
+    </div>  
+    <div class="product-detail-info-basic">
+        <h3 class="product-deatail-heading">@Model.TenSP</h3>
+        <div class="product-detail-info-basic-row">
+            <span class="product-detail-info-basic-core-review">
+                @if (Model.DiemTrungBinh > 0)
+                {
+                    <span class="material-symbols-outlined">star</span>
+                    <span>@Model.DiemTrungBinh?.ToString("N1") (@Model.SoLuotDG đánh giá)</span>
+                }
+            </span>
+            @if (Model.SoLuongDaBan > 0)
+            {
+                <span class="product-detail-info-basic-sold">Đã bán @Model.SoLuongDaBan</span>
+            }
+        </div>
+        <div class="product-detail-info-basic-row">
+            @if (Model.MucGiamGiaSP > 0)
+            {
+                <del class="product-detail-info-basic-original-price">@Model.GiaGocSauThue?.ToString("N0", new CultureInfo("vi-VN"))</del>
+                <span class="product-detail-info-basic-discount-level">-@Model.MucGiamGiaSP?.ToString("N0")%</span>
+            }
+
+        </div>
+        <div class="product-detail-info-basic-row">
+            <span class="product-detail-info-basic-discount-price">@Model.GiaSauGiamVaThue?.ToString("N0", new CultureInfo("vi-VN"))</span>
+        </div>
+        <div class="product-detail-info-basic-row">
+            <form asp-controller="Cart" asp-action="HandleAddToCart" method="post">
+                <input type="hidden" name="maSP" value="@Model.MaSP" />
+                <button type="submit" class="button add-to-cart" >Thêm vào giỏ</button>
+            </form>
+            <form asp-controller="Cart" asp-action="HandleBuyNow" method="post">
+                <input type="hidden" name="maSP" value="@Model.MaSP" />
+                <button type="submit" class="button">Mua ngay</button>
+            </form>
+        </div>
+    </div>
+    <div class="product-detail-info">
+        <h3 class="product-deatail-heading">Thông tin sản phẩm</h3>
+        <ul>
+            <li class="product-detail-info-list-item"><b>Thương hiệu:</b> @Model.TenTH</li>
+            <li class="product-detail-info-list-item"><b>Sản xuất tại:</b> @Model.TenQG</li>
+            <li class="product-detail-info-list-item"><b>Năm sản xuất:</b> @Model.NamSanXuatSP</li>
+            <li class="product-detail-info-list-item"><b>Phân loại:</b> @Model.PhanLoaiSP</li>
+            <li class="product-detail-info-list-item"><b>Thời gian bảo hành:</b> @Model.BaoHanhSP</li>
+            <li class="product-detail-info-list-item"><b>Kích thước:</b> @Model.KichThuocSP</li>
+            <li class="product-detail-info-list-item"><b>Khối lượng:</b> @Model.KhoiLuongSP</li>
+            <li class="product-detail-info-list-item"><b>Công suât tiêu thụ:</b> @Model.CongSuatTieuThu</li>
+            <li class="product-detail-info-list-item"><b>Chất liệu:</b> @Model.ChatLieuSP</li>
+            <li class="product-detail-info-list-item"><b>Tiện ích:</b> @Model.TienIchSP</li>
+            <li class="product-detail-info-list-item"><b>Công nghệ:</b> @Model.CongNgheSP</li>
+            @switch (Model.MaLSP)
+            {
+                case 1:
+                    @await Html.PartialAsync("Partials/_DetailMayLanh", Model.MayLanh)
+                    break;
+                case 2:
+                    @await Html.PartialAsync("Partials/_DetailTuLanh", Model.TuLanh)
+                    break;
+                case 3:
+                    @await Html.PartialAsync("Partials/_DetailMayLocKhongKhi", Model.MayLocKhongKhi)
+                    break;
+                case 4:
+                    @await Html.PartialAsync("Partials/_DetailMayLocNuoc", Model.MayLocNuoc)
+                    break;
+                case 5:
+                    @await Html.PartialAsync("Partials/_DetailMayRuaChen", Model.MayRuaChen)
+                    break;
+                case 6:
+                    @await Html.PartialAsync("Partials/_DetailNoiComDien", Model.NoiComDien)
+                    break;
+                case 7:
+                    @await Html.PartialAsync("Partials/_DetailNoiChien", Model.NoiChien)
+                    break;
+                case 8:
+                    @await Html.PartialAsync("Partials/_DetailTiVi", Model.TiVi)
+                    break;
+            }
+        </ul>
+    </div>
+    <div class="main-product-detail-review">
+        <div>
+            <h3 class="product-deatail-heading">Đánh giá sản phẩm</h3>
+            <form method="post" asp-action="HandleRating" class="rating-form">
+                <div class="star-rating">
+                    <input type="radio" name="rating" id="star5" value="5">
+                    <label for="star5"><span class="material-symbols-outlined">star</span></label>
+
+                    <input type="radio" name="rating" id="star4" value="4">
+                    <label for="star4"><span class="material-symbols-outlined">star</span></label>
+
+                    <input type="radio" name="rating" id="star3" value="3">
+                    <label for="star3"><span class="material-symbols-outlined">star</span></label>
+
+                    <input type="radio" name="rating" id="star2" value="2">
+                    <label for="star2"><span class="material-symbols-outlined">star</span></label>
+
+                    <input type="radio" name="rating" id="star1" value="1">
+                    <label for="star1"><span class="material-symbols-outlined">star</span></label>
+                </div>
+
+                <textarea
+                    name="review"
+                    class="comment-box input"
+                    placeholder="Nhập nhận xét của bạn..."
+                    rows="4"></textarea>
+                <input type="hidden" name="MaSP" value="@Model.MaSP">
+
+                <button type="submit" class="btn-submit button">
+                    Gửi đánh giá
+                </button>
+            </form>
+        </div>
+        <div>
+            @if(Model.ListDanhGia.Count > 0 ) {
+                <h3 class="product-deatail-heading">Đánh giá từ khách hàng</h3>
+                <ul class="rating-list">
+                    @foreach (var danhGia in Model.ListDanhGia) {
+                        <li>
+                            <div>
+                                <b>@danhGia.TenKH</b>
+                                <div>
+                                    @for(int i = 0; i < danhGia.DiemDG; i++) {
+                                        <span class="material-symbols-outlined">star</span>
+                                    }
+                                </div>
+                            </div>
+                            <p>@danhGia.NhanXetDG</p>
+                        </li>
+                    }
+                </ul>
+            }
+        </div>
+    </div>
+</div>
+
+
+@section Scripts {
+    <script src="~/js/product.js" asp-append-version="true"></script>
+}
+
+@if (!string.IsNullOrEmpty(error))
+{
+    <script>
+         alert('@Html.Raw(error)');
+    </script>
+}
+
+@if (!string.IsNullOrEmpty(message))
+{
+    <script>
+        alert('@Html.Raw(message)');
+    </script>
+}
