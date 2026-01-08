@@ -9,7 +9,9 @@
 @{
     var message = TempData["Message"] as string;
 
-    int maKH = int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier) ?? "4");
+    int maKH = int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier) ?? "0");
+    var roleStr = User.FindFirstValue(ClaimTypes.Role);
+    int QuyenTK = int.TryParse(roleStr, out var r) ? r : -1;
     var dgKHHienTai = @Model.ListDanhGia.FirstOrDefault(dg => dg.MaKH == maKH);
 }
 
@@ -47,16 +49,19 @@
             <div class="product_detail_col_inline">
                 <span class="product_detail_discount_price">@Model.GiaSauGiamVaThueSP.ToString("N0", new CultureInfo("vi-VN"))</span>
             </div>
-            <div class="product_detail_col_inline">
-                <form asp-controller="GioHang" asp-action="ThemSanPhamVaoGio" method="post">
-                    <input type="hidden" name="MaSP" value="@Model.MaSP" />
-                    <button class="button add_to_cart">Thêm vào giỏ</button>
-                </form>
-                <form asp-controller="GioHang" asp-action="MuaNgay" method="post">
-                    <input type="hidden" name="MaSP" value="@Model.MaSP" />
-                    <button class="button">Mua ngay</button>
-                </form>
-            </div>
+            @if (QuyenTK == 0) 
+            {
+                <div class="product_detail_col_inline">
+                    <form asp-controller="GioHang" asp-action="ThemSanPhamVaoGio" method="post">
+                        <input type="hidden" name="MaSP" value="@Model.MaSP" />
+                        <button class="button add_to_cart">Thêm vào giỏ</button>
+                    </form>
+                    <form asp-controller="GioHang" asp-action="MuaNgay" method="post">
+                        <input type="hidden" name="MaSP" value="@Model.MaSP" />
+                        <button class="button">Mua ngay</button>
+                    </form>
+                </div>
+            }
         </div> 
     </div>
 
@@ -112,42 +117,45 @@
             </ul>
         </div>
         <div class="product_detail_col right bottom">
-            <div class="product_detail_col_item">
-                <h3 class="product_detail_heading">Đánh giá sản phẩm</h3>
-                <form method="post" asp-action="DanhGia" class="product_detail_rating_form">
-                    <div class="product_detail_rating_star_icon">
-                        <input type="radio" name="DiemDG" @((dgKHHienTai?.DiemDG ?? 0) == 5 ? "checked" : "") id="star5" value="5" required>
-                        <label for="star5"><span class="material-symbols-outlined">star</span></label>
+            @if (QuyenTK == 0) 
+            {
+                <div class="product_detail_col_item">
+                    <h3 class="product_detail_heading">Đánh giá sản phẩm</h3>
+                    <form method="post" asp-action="DanhGia" class="product_detail_rating_form">
+                        <div class="product_detail_rating_star_icon">
+                            <input type="radio" name="DiemDG" @((dgKHHienTai?.DiemDG ?? 0) == 5 ? "checked" : "") id="star5" value="5" required>
+                            <label for="star5"><span class="material-symbols-outlined">star</span></label>
 
-                        <input type="radio" name="DiemDG" @((dgKHHienTai?.DiemDG ?? 0) == 4 ? "checked" : "") id="star4" value="4">
-                        <label for="star4"><span class="material-symbols-outlined">star</span></label>
+                            <input type="radio" name="DiemDG" @((dgKHHienTai?.DiemDG ?? 0) == 4 ? "checked" : "") id="star4" value="4">
+                            <label for="star4"><span class="material-symbols-outlined">star</span></label>
 
-                        <input type="radio" name="DiemDG" @((dgKHHienTai?.DiemDG ?? 0) == 3 ? "checked" : "") id="star3" value="3">
-                        <label for="star3"><span class="material-symbols-outlined">star</span></label>
+                            <input type="radio" name="DiemDG" @((dgKHHienTai?.DiemDG ?? 0) == 3 ? "checked" : "") id="star3" value="3">
+                            <label for="star3"><span class="material-symbols-outlined">star</span></label>
 
-                        <input type="radio" name="DiemDG" @((dgKHHienTai?.DiemDG ?? 0) == 2 ? "checked" : "") id="star2" value="2">
-                        <label for="star2"><span class="material-symbols-outlined">star</span></label>
+                            <input type="radio" name="DiemDG" @((dgKHHienTai?.DiemDG ?? 0) == 2 ? "checked" : "") id="star2" value="2">
+                            <label for="star2"><span class="material-symbols-outlined">star</span></label>
 
-                        <input type="radio" name="DiemDG" @((dgKHHienTai?.DiemDG ?? 0) == 1 ? "checked" : "") id="star1" value="1">
-                        <label for="star1"><span class="material-symbols-outlined">star</span></label>
-                    </div>
-                    <p class="product_detail_rating_message"></p>
+                            <input type="radio" name="DiemDG" @((dgKHHienTai?.DiemDG ?? 0) == 1 ? "checked" : "") id="star1" value="1">
+                            <label for="star1"><span class="material-symbols-outlined">star</span></label>
+                        </div>
+                        <p class="product_detail_rating_message"></p>
 
-                    <textarea
-                        asp-for="@dgKHHienTai!.NhanXetDG"
-                        name="NhanXetDG"
-                        class="product_detail_review input"
-                        placeholder="Nhập nhận xét của bạn"
-                        rows="4"
-                        >
-                    </textarea>
-                    <input type="hidden" name="MaSP" value="@Model.MaSP">
+                        <textarea
+                            asp-for="@dgKHHienTai!.NhanXetDG"
+                            name="NhanXetDG"
+                            class="product_detail_review input"
+                            placeholder="Nhập nhận xét của bạn"
+                            rows="4"
+                            >
+                        </textarea>
+                        <input type="hidden" name="MaSP" value="@Model.MaSP">
 
-                    <button type="submit" class="product_detail_rating_submit button">
-                        Lưu
-                    </button>
-                </form>
-            </div>
+                        <button type="submit" class="product_detail_rating_submit button">
+                            Lưu
+                        </button>
+                    </form>
+                </div>
+            }
             @if (Model?.ListDanhGia?.Count > 0) {
                 <div class="product_detail_col_item">
                     <h3 class="product_detail_heading">Đánh giá từ khách hàng</h3>

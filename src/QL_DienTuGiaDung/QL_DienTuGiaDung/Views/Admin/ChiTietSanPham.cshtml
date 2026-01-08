@@ -15,8 +15,6 @@
         <input type="hidden" asp-for="MaSP" />
         <h3>@(Model.MaSP == 0 ? "Thêm sản phẩm" : "Chi tiết sản phẩm")</h3>
         
-        <div asp-validation-summary="All" style="color: var(--color-danger); font-size: 1.4rem; margin-bottom: 15px;"></div>
-        
         <div class="admin-product-detail-form-row">
             <div class="admin-product-detail-form-group">
                 <label asp-for="TenSP">Tên sản phẩm:</label>
