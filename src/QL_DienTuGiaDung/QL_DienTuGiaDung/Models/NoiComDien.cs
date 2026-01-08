@@ -1,13 +1,12 @@
 ﻿namespace QL_DienTuGiaDung.Models
 {
-    public class NoiComDien
+    public class NoiComDien : SanPham
     {
         public int MaNCD { get; set; }
-        public int MaSP { get; set; }
-        public string? DungTichNCD { get; set; }
-        public string? ChucNangNCD { get; set; }
-        public string? DoDayNCD { get; set; }
-        public string? DieuKhienNCD { get; set; }
-        public string? ChieuDaiDayDienNCD { get; set; }
+        public string? DungTichNCD { get; set; } = string.Empty;
+        public string? ChucNangNCD { get; set; } = string.Empty;
+        public string? DoDayNCD { get; set; } = string.Empty;
+        public string? DieuKhienNCD { get; set; } = string.Empty;
+        public string? ChieuDaiDayDienNCD { get; set; } = string.Empty;
     }
 }

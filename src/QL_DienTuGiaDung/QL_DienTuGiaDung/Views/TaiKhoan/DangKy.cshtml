@@ -1,0 +1,79 @@
+@model TaiKhoanKhachHang
+
+@{
+    var message = TempData["Message"] as string;
+}
+
+@section Styles {
+    <link rel="stylesheet" href="~/css/taikhoan.css" asp-append-version="true"/>
+}
+
+<div class="account_wrapper">
+    <div class="account_form">
+        <h3 class="account_form_heading">Đăng ký thông tin khách hàng</h3>
+        <form method="post" asp-action="DangKy">
+            <div class="account_form_group">
+                <label asp-for="KhachHang.TenKH">Họ tên:</label>
+                <input class="input" asp-for="KhachHang.TenKH" type="text" placeholder="Nhập họ tên" />
+                <span asp-validation-for="KhachHang.TenKH" class="account_form_group_message"></span>
+            </div>
+            <div class="account_form_group">
+                <label asp-for="KhachHang.EmailKH">Email:</label>
+                <input class="input" asp-for="KhachHang.EmailKH" type="email" placeholder="Nhập emai (không bắt buộc)" />
+                <span asp-validation-for="KhachHang.EmailKH" class="account_form_group_message"></span>
+            </div>
+            <div class="account_form_group">
+                <div class="inline">
+                    <label asp-for="KhachHang.GioiTinhKH">Giới tính:</label>
+                    <div class="account_form_group_gender">
+                        <label>
+                            <input type="radio" asp-for="KhachHang.GioiTinhKH" required value="1"> Nam
+                        </label>
+                        <label>
+                            <input type="radio" asp-for="KhachHang.GioiTinhKH" value="-1"> Nữ
+                        </label>
+                        <label>
+                            <input type="radio" asp-for="KhachHang.GioiTinhKH" value="0"> Khác
+                        </label>
+                    </div>
+                </div>
+                <span asp-validation-for="KhachHang.GioiTinhKH" class="account_form_group_message"></span>
+            </div>
+            <div class="account_form_group">
+                <label asp-for="DiaChiNhanHang.TinhTPChon">Tỉnh/Thành Phố</label>
+                <select class="select" id="TinhTPChon" asp-for="DiaChiNhanHang.TinhTPChon" required>
+                    <option value="">-- Chọn Tỉnh/Thành phố --</option>
+                </select>
+                <span asp-validation-for="DiaChiNhanHang.TinhTPChon" class="account_form_group_message"></span>
+            </div>
+            <div class="account_form_group">
+                <label asp-for="DiaChiNhanHang.XaPhuongChon">Xã/Phường</label>
+                <select class="select" id="XaPhuongChon" asp-for="DiaChiNhanHang.XaPhuongChon" required>
+                    <option value="">-- Chọn Xã/Phường --</option>
+                </select>
+                <span asp-validation-for="DiaChiNhanHang.XaPhuongChon" class="account_form_group_message"></span>
+            </div>
+            <div class="account_form_group">
+                <label asp-for="DiaChiNhanHang.DiaChiCuThe.TenDCCT">Số nhà, tền đường/ấp/khóm:</label>
+                <input class="input" asp-for="DiaChiNhanHang.DiaChiCuThe.TenDCCT" type="text" placeholder="Nhập số nhà, tền đường/ấp/khóm" />
+                <span asp-validation-for="DiaChiNhanHang.DiaChiCuThe.TenDCCT" class="account_form_group_message"></span>
+            </div>
+            <button type="submit" class="button">Xác minh</button>
+        </form>
+    </div>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+
+    <script>
+        initAddressForm('TinhTPChon', 'XaPhuongChon');
+    </script>
+}
+
+@if (!string.IsNullOrEmpty(message))
+{
+    <script>
+        alert('@Html.Raw(message)');
+    </script>
+}

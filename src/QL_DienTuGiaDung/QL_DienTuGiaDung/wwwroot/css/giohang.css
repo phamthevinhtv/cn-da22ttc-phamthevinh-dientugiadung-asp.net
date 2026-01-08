@@ -1,0 +1,223 @@
+.cart_item {
+    background-color: var(--color-white);
+    padding: 12px;
+    border-radius: var(--radius-normal);
+    margin-bottom: 12px;
+}
+
+.cart_item_heading {
+    font-size: 1.8rem;
+    font-weight: 600;
+    margin-bottom: 12px;
+}
+
+.cart_item_empty {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.cart_item_empty img {
+    width: 100%;
+    max-width: 400px;
+}
+
+.cart_item_empty p {
+    margin: 12px 0;
+}
+
+.cart_item_row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+}
+
+.cart_item_row .cart_item_heading {
+    margin: 0;
+}
+
+.cart_item_row.border_bottom {
+    border-bottom: var(--border-normal);
+    padding-bottom: 12px;
+    margin-bottom: 12px;
+}
+
+.cart_item_row_left {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.cart_item_row.align_right {
+    display: flex;
+    align-self: center;
+    justify-content: flex-end;
+}
+
+.cart_item_row img {
+    width: 80px;
+    aspect-ratio: 1 / 1;
+    object-fit: contain;
+    border-radius: var(--radius-normal);
+    border: var(--border-normal);
+    padding: 6px;
+}
+
+.cart_item_row_price {
+    font-weight: 600;
+}
+
+.cart_item_button_no_style,
+.cart_item_input_no_style {
+    border: none;
+    outline: none;
+    background-color: transparent;
+}
+
+.cart_item_button_no_style {
+    display: flex;
+    align-items: center;
+    cursor: pointer;
+    padding: 3px;
+}
+
+.cart_item_button_no_style.delete {
+    font-size: 1.4rem;
+    color: var(--color-danger);
+}
+
+.cart_item_button_no_style.delete .material-symbols-outlined {
+    font-size: 2rem;
+}
+
+.cart_item_input_quantity {
+    font-size: 1.4rem;
+    width: 100%;
+    padding: 0 6px;
+    text-align: center;
+    padding: 3px;
+    border: none;
+    outline: none;
+    background-color: transparent;
+}
+
+.cart_item_form_quantity {
+    border: var(--border-normal);
+    border-radius: var(--radius-normal);
+    width: 100%;
+    max-width: 100px;
+    display: flex;
+    align-items: center;
+}
+
+.button_subtract_quantity {
+    border-right: var(--border-normal);
+}
+
+.button_add_quantity {
+    border-left: var(--border-normal);
+}
+
+.cart_item_row.item_price {
+    padding-top: 12px;
+    margin-top: 12px;
+    border-top: var(--border-normal);
+}
+
+.cart_item_row.item_price p + p {
+    font-weight: 600;
+    color: var(--color-danger);
+}
+
+.delivery_address_item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+}
+
+.delivery_address_item_left label {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+}
+
+.delivery_address_item_left label input {
+    margin-right: 6px;
+}
+
+.delivery_address_item_left p {
+    margin-right: 4px;
+}
+
+.delivery_address_item_left span {
+    color: var(--color-success);
+    font-size: 1.4rem;
+}
+
+.delivery_address_item_right {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 6px;
+    font-size: 1.4rem;
+}
+
+.delivery_address_item_right_set_default,
+.delivery_address_item_right_edit,
+.delivery_address_item_right_delete {
+    display: flex;
+    align-items: center;
+    cursor: pointer;
+}
+
+.delivery_address_item_right_set_default {
+    color: var(--color-success);
+    border: none;
+    outline: none;
+    background-color: transparent;
+}
+
+.delivery_address_item_right_edit {
+    color: var(--color-primary);
+}
+
+.delivery_address_item_right_delete {
+    color: var(--color-danger);
+    border: none;
+    outline: none;
+    background-color: transparent;
+}
+
+.delivery_address_item_right .material-symbols-outlined {
+    font-size: 2rem;
+}
+
+.delivery_address_item + .delivery_address_item {
+    border-top: var(--border-normal);
+    padding-top: 6px;
+    margin-top: 6px;
+}
+
+.radio_payment_method {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.cart_item_button_order {
+    width: 100%;
+}
+
+.delivery_address_button_add {
+    margin-top: 12px;
+    background-color: var(--color-white);
+    border-color: var(--color-primary);
+    border-style: dashed;
+    color: var(--color-primary);
+    width: 100%;
+    display: flex;
+    justify-content: center;
+}

@@ -1,0 +1,74 @@
+@model QL_DienTuGiaDung.Models.TaiKhoan
+@{
+    var message = TempData["Message"] as string;
+}
+
+@section Styles {
+    <link rel="stylesheet" href="~/css/taikhoan.css" asp-append-version="true"/>
+}
+
+<div class="account_info">
+    <div class="account_form">
+        <h3 class="account_form_heading">Thông tin tài khoản</h3>
+        <form method="post" asp-action="HandleUpdateTenTK">
+            <input type="hidden" asp-for="MaTK" />
+            <div class="account_form_group">
+                <label asp-for="TenTK">Tên đăng nhập:</label>
+                <input class="input" type="text" asp-for="TenTK" placeholder="Nhập tên đăng nhập">
+                <span asp-validation-for="TenTK" class="account_form_group_message"></span>
+            </div>
+            <div class="inline">
+                <button class="button" id="button-save-profile" type="submit" style="width: 100%;">Lưu</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<div class="account_info" style="margin-top: 12px;">
+    <div class="account_form">
+        <h3 class="account_form_heading">Đổi mật khẩu</h3>
+        <form method="post" asp-action="HandleChangePassword" id="form-change-password">
+            <div class="account_form_group">
+                <label for="MatKhauTK">Mật khẩu mới:</label>
+                <input class="input" type="password" name="MatKhauTK" minlength="6" id="input-password" required placeholder="Nhập mật khẩu mới">
+            </div>
+            <div class="account_form_group">
+                <label for="confirm-password">Xác nhận mật khẩu mới:</label>
+                <input class="input" type="password" minlength="6" id="confirm-password" required placeholder="Nhập lại mật khẩu mới">
+            </div>
+            <button class="button" type="submit" style="width: 100%;">Đổi mật khẩu</button>
+        </form>
+    </div>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    changePasswordForm.addEventListener('submit', function(e) {
+        const password = passwordInput.value;
+        const confirmPassword = confirmPasswordInput.value;
+
+        if (password !== confirmPassword) {
+            e.preventDefault();
+            alert('Mật khẩu xác nhận không khớp!');
+            return false;
+        }
+
+        if (password.length < 6) {
+            e.preventDefault();
+            alert('Mật khẩu phải có ít nhất 6 ký tự!');
+            return false;
+        }
+    });
+});
+</script>
+
+@if (!string.IsNullOrEmpty(message))
+{
+    <script>
+        alert(@Html.Raw(Json.Serialize(message)));
+    </script>
+}

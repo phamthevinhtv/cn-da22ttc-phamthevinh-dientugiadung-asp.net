@@ -1,6 +1,7 @@
 using QL_DienTuGiaDung.Helpers;
 using QL_DienTuGiaDung.Models;
 using Microsoft.Data.SqlClient;
+using System.Data;
 
 namespace QL_DienTuGiaDung.DAL
 {
@@ -13,7 +14,7 @@ namespace QL_DienTuGiaDung.DAL
             _databaseHelper = databaseHelper;
         }
 
-        public List<ThongKeDoanhThu> GetThongKeTheoNam()
+        public DataTable LayThongKeTheoNam()
         {
             string sql = @"
                 SELECT 
@@ -29,11 +30,10 @@ namespace QL_DienTuGiaDung.DAL
                 GROUP BY YEAR(dh.NgayTaoDH)
                 ORDER BY YEAR(dh.NgayTaoDH) DESC";
 
-            var datas = _databaseHelper.ExecuteQuery(sql);
-            return DataHelper.MapToList<ThongKeDoanhThu>(datas);
+            return _databaseHelper.ExecuteDataTable(sql);
         }
 
-        public List<ThongKeDoanhThu> GetThongKeTheoQuy(int nam)
+        public DataTable LayThongKeTheoQuy(int nam)
         {
             string sql = @"
                 SELECT 
@@ -50,7 +50,7 @@ namespace QL_DienTuGiaDung.DAL
                     SUM(bg.SoLuongDat) as SoSanPhamBan
                 FROM DonHang dh
                 INNER JOIN BaoGom bg ON dh.MaDH = bg.MaDH
-                WHERE dh.MaTTDH = 5 AND YEAR(dh.NgayTaoDH) = @Nam
+                WHERE dh.MaTTDH = 5 AND YEAR(dh.NgayTaoDH) = @nam
                 GROUP BY CASE 
                     WHEN MONTH(dh.NgayTaoDH) IN (1,2,3) THEN 1
                     WHEN MONTH(dh.NgayTaoDH) IN (4,5,6) THEN 2
@@ -59,12 +59,11 @@ namespace QL_DienTuGiaDung.DAL
                 END
                 ORDER BY Quy";
 
-            var parameters = new[] { new SqlParameter("@Nam", nam) };
-            var datas = _databaseHelper.ExecuteQuery(sql, parameters: parameters);
-            return DataHelper.MapToList<ThongKeDoanhThu>(datas);
+            var parameters = new[] { new SqlParameter("@nam", nam) };
+            return _databaseHelper.ExecuteDataTable(sql, parameters: parameters);
         }
 
-        public List<ThongKeDoanhThu> GetThongKeTheoThang(int nam, int quy)
+        public DataTable LayThongKeTheoThang(int nam, int quy)
         {
             int thangBatDau = (quy - 1) * 3 + 1;
             int thangKetThuc = quy * 3;
@@ -93,11 +92,10 @@ namespace QL_DienTuGiaDung.DAL
                 new SqlParameter("@ThangKetThuc", thangKetThuc)
             };
 
-            var datas = _databaseHelper.ExecuteQuery(sql, parameters: parameters);
-            return DataHelper.MapToList<ThongKeDoanhThu>(datas);
+            return _databaseHelper.ExecuteDataTable(sql, parameters: parameters);
         }
 
-        public List<int> GetAvailableYears()
+        public DataTable LayCacNamTonTai()
         {
             string sql = @"
                 SELECT DISTINCT YEAR(NgayTaoDH) as Nam
@@ -105,8 +103,12 @@ namespace QL_DienTuGiaDung.DAL
                 WHERE MaTTDH = 5
                 ORDER BY YEAR(NgayTaoDH) DESC";
 
-            var datas = _databaseHelper.ExecuteQuery(sql);
-            return datas.Select(row => Convert.ToInt32(row["Nam"])).ToList();
+            return _databaseHelper.ExecuteDataTable(sql);
+        }
+
+        internal List<ThongKeDoanhThu> LayThongKeTheoQuy(object value)
+        {
+            throw new NotImplementedException();
         }
     }
 }

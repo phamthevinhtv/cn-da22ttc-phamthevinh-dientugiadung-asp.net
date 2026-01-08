@@ -287,3 +287,373 @@ CREATE TABLE DanhGia (
     FOREIGN KEY (MaKH) REFERENCES KhachHang(MaKH) ON DELETE CASCADE
 );
 GO
+
+-- View
+CREATE VIEW View_LayDanhSachSanPham
+AS
+SELECT 
+    sp.MaSP,
+    sp.MaLSP,
+    sp.MaQG,
+    sp.MaTH,
+    sp.TenSP,
+    sp.SoLuongSP,
+    sp.GiaNhapSP,
+    sp.GiaGocSP,
+    sp.PhanLoaiSP,
+    sp.NamSanXuatSP,
+    sp.BaoHanhSP,
+    sp.KichThuocSP,
+    sp.KhoiLuongSP,
+    sp.CongSuatTieuThuSP,
+    sp.ChatLieuSP,
+    sp.TienIchSP,
+    sp.CongNgheSP,
+    sp.NgayTaoSP,
+    sp.NgayCapNhatSP,
+    sp.TrangThaiSP,
+    lsp.TenLSP,
+    lsp.TrangThaiLSP,
+    lsp.ThueGTGTLSP,
+    sp.GiaGocSP * (1 + lsp.ThueGTGTLSP / 100) AS GiaGocSauThueSP,
+    CASE 
+        WHEN sp.NgayHetGiamGiaSP IS NOT NULL AND sp.NgayHetGiamGiaSP >= GETDATE()
+        THEN sp.MucGiamGiaSP
+        ELSE 0
+    END AS MucGiamGiaSP,
+    CASE 
+        WHEN sp.NgayHetGiamGiaSP IS NOT NULL AND sp.NgayHetGiamGiaSP >= GETDATE()
+        THEN sp.GiaGocSP * (1 - sp.MucGiamGiaSP / 100) * (1 + lsp.ThueGTGTLSP / 100)
+        ELSE sp.GiaGocSP * (1 + lsp.ThueGTGTLSP / 100)
+    END AS GiaSauGiamVaThueSP,
+    sp.NgayHetGiamGiaSP,
+    bg.SoLuongDaBanSP,
+    dg.DiemTrungBinhSP,
+    dg.SoLuotDGSP,
+    asp.UrlAnh,
+    qg.TenQG,
+    CONCAT(th.TenTH, ' (', qg.TenQG, ')') AS TenTH
+FROM SanPham sp
+JOIN LoaiSanPham lsp ON sp.MaLSP = lsp.MaLSP
+LEFT JOIN Anh asp 
+    ON sp.MaSP = asp.MaSP 
+    AND asp.MacDinhAnh = 1
+LEFT JOIN (
+    SELECT bg.MaSP, SUM(bg.SoLuongDat) AS SoLuongDaBanSP
+    FROM BaoGom bg
+    JOIN DonHang dh ON bg.MaDH = dh.MaDH
+    WHERE dh.MaTTDH = 5
+    GROUP BY bg.MaSP
+) bg ON sp.MaSP = bg.MaSP
+LEFT JOIN (
+    SELECT MaSP, AVG(CAST(DiemDG AS DECIMAL(3,2))) AS DiemTrungBinhSP, COUNT(*) AS SoLuotDGSP
+    FROM DanhGia
+    GROUP BY MaSP
+) dg ON sp.MaSP = dg.MaSP
+LEFT JOIN ThuongHieu th ON sp.MaTH = th.MaTH
+LEFT JOIN QuocGia qg ON sp.MaQG = qg.MaQG;
+GO
+
+-- PROC
+CREATE PROCEDURE SP_TaoTaiKhoanKhachHang
+(
+    @TenKH NVARCHAR(50),
+    @GioiTinhKH INT = NULL,
+    @SoDienThoaiKH VARCHAR(10),
+    @EmailKH VARCHAR(100) = NULL,
+    @MaTTP CHAR(2),
+    @TenTTP NVARCHAR(30),
+    @MaXP CHAR(5),
+    @TenXP NVARCHAR(40),
+    @TenDCCT NVARCHAR(255)
+)
+AS
+BEGIN
+    SET NOCOUNT ON;
+
+    BEGIN TRY
+        BEGIN TRANSACTION;
+
+        IF NOT EXISTS (SELECT 1 FROM TinhThanhPho WHERE MaTTP = @MaTTP)
+        BEGIN
+            INSERT INTO TinhThanhPho (MaTTP, TenTTP)
+            VALUES (@MaTTP, @TenTTP);
+        END
+
+        IF NOT EXISTS (SELECT 1 FROM XaPhuong WHERE MaXP = @MaXP)
+        BEGIN
+            INSERT INTO XaPhuong (MaXP, MaTTP, TenXP)
+            VALUES (@MaXP, @MaTTP, @TenXP);
+        END
+
+        INSERT INTO KhachHang
+        (
+            TenKH,
+            GioiTinhKH,
+            SoDienThoaiKH,
+            EmailKH
+        )
+        VALUES
+        (
+            @TenKH,
+            @GioiTinhKH,
+            @SoDienThoaiKH,
+            @EmailKH
+        );
+
+        DECLARE @MaKH INT = SCOPE_IDENTITY();
+
+        INSERT INTO TaiKhoan
+        (
+            MaKH,
+            TenTK,
+            QuyenTK,
+            TrangThaiTK
+        )
+        VALUES
+        (
+            @MaKH,
+            @SoDienThoaiKH,
+            0,
+            1
+        );
+
+        INSERT INTO DiaChiCuThe
+        (
+            MaXP,
+            MaKH,
+            TenDCCT,
+            MacDinhDCCT
+        )
+        VALUES
+        (
+            @MaXP,
+            @MaKH,
+            @TenDCCT,
+            1
+        );
+
+        COMMIT TRANSACTION;
+
+        RETURN 1; 
+    END TRY
+    BEGIN CATCH
+        ROLLBACK TRANSACTION;
+        RETURN 0;
+    END CATCH
+END
+GO
+
+CREATE PROCEDURE SP_ThemDiaChiNhanHang
+(
+    @MaKH INT,
+    @MaTTP CHAR(2),
+    @TenTTP NVARCHAR(30),
+    @MaXP CHAR(5),
+    @TenXP NVARCHAR(40),
+    @TenDCCT NVARCHAR(255),
+    @MacDinhDCCT INT 
+)
+AS
+BEGIN
+    SET NOCOUNT ON;
+
+    BEGIN TRY
+        BEGIN TRANSACTION;
+
+        IF NOT EXISTS (SELECT 1 FROM TinhThanhPho WHERE MaTTP = @MaTTP)
+        BEGIN
+            INSERT INTO TinhThanhPho (MaTTP, TenTTP)
+            VALUES (@MaTTP, @TenTTP);
+        END
+
+        IF NOT EXISTS (SELECT 1 FROM XaPhuong WHERE MaXP = @MaXP)
+        BEGIN
+            INSERT INTO XaPhuong (MaXP, MaTTP, TenXP)
+            VALUES (@MaXP, @MaTTP, @TenXP);
+        END
+
+        IF (@MacDinhDCCT = 1)
+        BEGIN
+            UPDATE DiaChiCuThe
+            SET MacDinhDCCT = 0
+            WHERE MaKH = @MaKH;
+        END
+
+        INSERT INTO DiaChiCuThe
+        (
+            MaXP,
+            MaKH,
+            TenDCCT,
+            MacDinhDCCT
+        )
+        VALUES
+        (
+            @MaXP,
+            @MaKH,
+            @TenDCCT,
+            @MacDinhDCCT
+        );
+
+        COMMIT TRANSACTION;
+        RETURN 1;
+    END TRY
+    BEGIN CATCH
+        ROLLBACK TRANSACTION;
+        RETURN 0;
+    END CATCH
+END
+GO
+
+CREATE PROCEDURE SP_SuaDiaChiNhanHang
+(
+    @MaDCCT INT,
+    @MaKH INT,
+    @MaTTP CHAR(2),
+    @TenTTP NVARCHAR(30),
+    @MaXP CHAR(5),
+    @TenXP NVARCHAR(40),
+    @TenDCCT NVARCHAR(255),
+    @MacDinhDCCT INT
+)
+AS
+BEGIN
+    SET NOCOUNT ON;
+
+    BEGIN TRY
+        BEGIN TRANSACTION;
+
+        IF NOT EXISTS (SELECT 1 FROM TinhThanhPho WHERE MaTTP = @MaTTP)
+        BEGIN
+            INSERT INTO TinhThanhPho (MaTTP, TenTTP)
+            VALUES (@MaTTP, @TenTTP);
+        END
+
+        IF NOT EXISTS (SELECT 1 FROM XaPhuong WHERE MaXP = @MaXP)
+        BEGIN
+            INSERT INTO XaPhuong (MaXP, MaTTP, TenXP)
+            VALUES (@MaXP, @MaTTP, @TenXP);
+        END
+
+        IF (@MacDinhDCCT = 1)
+        BEGIN
+            UPDATE DiaChiCuThe
+            SET MacDinhDCCT = 0
+            WHERE MaKH = @MaKH;
+        END
+
+        UPDATE DiaChiCuThe
+        SET
+            MaXP = @MaXP,
+            TenDCCT = @TenDCCT,
+            MacDinhDCCT = @MacDinhDCCT
+        WHERE MaDCCT = @MaDCCT
+          AND MaKH = @MaKH;
+
+        COMMIT TRANSACTION;
+        RETURN 1;
+    END TRY
+    BEGIN CATCH
+        ROLLBACK TRANSACTION;
+        RETURN 0;
+    END CATCH
+END
+GO
+
+CREATE TYPE TVP_DanhSachDatHang AS TABLE
+(
+    MaSP INT NOT NULL,
+    SoLuongDat INT NOT NULL
+);
+GO
+
+CREATE PROCEDURE Proc_DatHang
+    @MaKH INT,
+    @MaDCCT INT,
+    @PhiVanChuyenDH DECIMAL(10,0) = 0,
+    @DanhSachSP TVP_DanhSachDatHang READONLY,
+    @MaTTTT INT = 1
+AS
+BEGIN
+    SET NOCOUNT ON;
+    SET XACT_ABORT ON;
+
+    IF @MaKH IS NULL
+        RETURN 0;
+
+    BEGIN TRAN;
+    BEGIN TRY
+        IF EXISTS (
+            SELECT 1
+            FROM SanPham sp WITH (UPDLOCK, HOLDLOCK)
+            JOIN @DanhSachSP ds ON sp.MaSP = ds.MaSP
+            WHERE sp.SoLuongSP < ds.SoLuongDat
+        )
+        BEGIN
+            ROLLBACK;
+            RETURN 0;
+        END
+
+        UPDATE sp
+        SET sp.SoLuongSP -= ds.SoLuongDat,
+            sp.NgayCapNhatSP = GETDATE()
+        FROM SanPham sp
+        JOIN @DanhSachSP ds ON sp.MaSP = ds.MaSP;
+
+        DECLARE @MaDH INT;
+        DECLARE @SoTienHang DECIMAL(10,0);
+
+        SELECT @SoTienHang =
+            SUM(
+                ds.SoLuongDat
+                * sp.GiaGocSP
+                * (1 + ISNULL(lsp.ThueGTGTLSP,0)/100.0)
+                * (1 - CASE 
+                        WHEN sp.NgayHetGiamGiaSP IS NOT NULL 
+                             AND sp.NgayHetGiamGiaSP >= GETDATE()
+                        THEN ISNULL(sp.MucGiamGiaSP,0)/100.0
+                        ELSE 0
+                      END)
+            )
+        FROM @DanhSachSP ds
+        JOIN SanPham sp ON ds.MaSP = sp.MaSP
+        LEFT JOIN LoaiSanPham lsp ON sp.MaLSP = lsp.MaLSP;
+
+        INSERT INTO DonHang
+            (MaKH, SoTienDH, PhiVanChuyenDH, TongTienDH, MaPTTT, MaTTDH, MaDCCT)
+        VALUES
+            (@MaKH, @SoTienHang, ISNULL(@PhiVanChuyenDH,0), @SoTienHang + ISNULL(@PhiVanChuyenDH,0), 1, 1, @MaDCCT);
+
+        SET @MaDH = SCOPE_IDENTITY();
+
+        INSERT INTO BaoGom
+            (MaSP, MaDH, SoLuongDat, GiaDat, ThueGTGTDat, MucGiamGiaDat)
+        SELECT
+            ds.MaSP,
+            @MaDH,
+            ds.SoLuongDat,
+            sp.GiaGocSP,
+            ISNULL(lsp.ThueGTGTLSP,0),
+            CASE 
+                WHEN sp.NgayHetGiamGiaSP IS NOT NULL 
+                     AND sp.NgayHetGiamGiaSP >= GETDATE()
+                THEN ISNULL(sp.MucGiamGiaSP,0)
+                ELSE 0
+            END
+        FROM @DanhSachSP ds
+        JOIN SanPham sp ON ds.MaSP = sp.MaSP
+        LEFT JOIN LoaiSanPham lsp ON sp.MaLSP = lsp.MaLSP;
+
+        INSERT INTO ThanhToan (MaDH, MaTTTT)
+        VALUES (@MaDH, ISNULL(@MaTTTT,1));
+
+        COMMIT;
+
+        RETURN 1; 
+    END TRY
+    BEGIN CATCH
+        ROLLBACK;
+        RETURN 0;
+    END CATCH
+END;
+GO

@@ -1,0 +1,9 @@
+@model List<LoaiSanPham>
+
+@if (Model != null && Model.Count > 0) 
+{
+    @foreach (var item in Model)
+    {
+        <a asp-route-maloai="@item.MaLSP" class="main_content_sidebar_nav_item">@item.TenLSP</a>
+    }
+}

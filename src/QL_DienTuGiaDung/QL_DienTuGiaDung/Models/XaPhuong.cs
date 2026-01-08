@@ -2,8 +2,7 @@
 {
     public class XaPhuong
     {
-        public string? MaXP { get; set; }
-        public string? MaTTP { get; set; }
-        public string? TenXP { get; set; }
+        public string MaXP { get; set; } = string.Empty;
+        public string TenXP { get; set; } = string.Empty;
     }
 }

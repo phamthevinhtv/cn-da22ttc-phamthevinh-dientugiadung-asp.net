@@ -14,6 +14,6 @@ namespace QL_DienTuGiaDung.Models
     {
         public int? Nam { get; set; }
         public int? Quy { get; set; }
-        public string LoaiThongKe { get; set; } = "nam"; // "nam", "quy", "thang"
+        public string LoaiThongKe { get; set; } = "nam"; 
     }
 }

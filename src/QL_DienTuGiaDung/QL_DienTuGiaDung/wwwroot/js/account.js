@@ -1,123 +1,54 @@
-document.addEventListener("DOMContentLoaded", () => {
-    const btnAddAdress = document.getElementById('button-add-address');
-    const btnCancelAddAdress = document.getElementById('button-cancel-add-address');
-    const frmAddAdress = document.getElementById('form-add-address');
+document.addEventListener('DOMContentLoaded', function() {
+    const editButton = document.getElementById('button-edit-profile');
+    const cancelButton = document.getElementById('button-cancel-edit-profile');
+    const saveButton = document.getElementById('button-save-profile');
+    const usernameInput = document.querySelector('input[name="TenTK"]');
+    const passwordInput = document.getElementById('input-password');
+    const confirmPasswordInput = document.getElementById('confirm-password');
+    const changePasswordForm = document.getElementById('form-change-password');
 
-    if (btnAddAdress) {
-        btnAddAdress.addEventListener('click', function() {
-            frmAddAdress.style.display = 'block';
-            btnCancelAddAdress.style.display = 'flex';
-            btnAddAdress.style.display = 'none';
-        })
-    }
+    // Initially hide cancel and save buttons
+    cancelButton.style.display = 'none';
+    saveButton.style.display = 'none';
 
-    if (btnCancelAddAdress) {
-        btnCancelAddAdress.addEventListener('click', function() {
-            frmAddAdress.style.display = 'none';
-            btnCancelAddAdress.style.display = 'none';
-            btnAddAdress.style.display = 'flex';
-        })
-    }
-
-    //
-
-    const btnSaveProfile = document.getElementById('button-save-profile');
-    const btnEditProfile = document.getElementById('button-edit-profile');
-    const btnCancelEditProfile = document.getElementById('button-cancel-edit-profile');
-    const inpsDisabled = document.querySelectorAll('.input-disabled');
-
-    if (btnEditProfile) {
-        btnEditProfile.addEventListener('click', function() {
-            btnSaveProfile.style.display = 'block';
-            btnCancelEditProfile.style.display = 'flex';
-            btnEditProfile.style.display = 'none';
-            inpsDisabled.forEach(input => {
-                input.disabled = false;
-            });
-        })
-    }
-
-    if (btnCancelEditProfile) {
-        btnCancelEditProfile.addEventListener('click', function() {
-            btnSaveProfile.style.display = 'none';
-            btnCancelEditProfile.style.display = 'none';
-            btnEditProfile.style.display = 'block';
-            inpsDisabled.forEach(input => {
-                input.disabled = true;
-            });
-        })
-    }
-
-    //
-    
-    const apiBase = '/api';
-
-    async function loadCommunes(provinceCode) {
-        try {
-            const res = await fetch(
-                `${apiBase}/provinces/${provinceCode}/communes`
-            );
-            if (!res.ok) throw new Error('Không thể tải danh sách xã/phường');
-
-            const data = await res.json();
-
-            const communes = data.communes;
-
-            communeSelect.innerHTML = '<option value="">-- Chọn Xã/Phường --</option>';
-
-            communes.forEach(c => {
-                const option = document.createElement('option');
-                option.value = `${c.code}|${c.name}`;
-                option.textContent = c.name;
-                communeSelect.appendChild(option);
-            });
-        } catch (err) {
-            console.error(err);
-        }
-    }
-
-    //
-
-    document.querySelectorAll('.btn-edit-address').forEach(btn => {
-        btn.addEventListener('click', async () => {
-
-            frmAddAdress.style.display = 'block';
-            btnAddAdress.style.display = 'none';
-            btnCancelAddAdress.style.display = 'flex';
-
-            document.getElementById('MaDCCT').value = btn.dataset.madcct;
-
-            document.querySelector('[name="DiaChiCuThe.TenDCCT"]').value = btn.dataset.tendcct;
-
-            const provinceValue = `${btn.dataset.mattp}|${btn.dataset.tenttp}`;
-            provinceSelect.value = provinceValue;
-
-            await loadCommunes(btn.dataset.mattp);
-
-            const communeValue = `${btn.dataset.maxp}|${btn.dataset.tenxp}`;
-            communeSelect.value = communeValue;
-
-            if(btn.dataset.macdinhdcct == 1) {
-                document.querySelector('#check-macdinhdcct').style.display = 'none';
-                document.querySelector('#address-default-in-form').style.display = 'block';
-            } else {
-                document.querySelector('#check-macdinhdcct').style.display = 'flex';
-                document.querySelector('#address-default-in-form').style.display = 'none';
-            }
-
-            document.querySelector('#form-add-address h3').innerText = 'Chỉnh sửa địa chỉ';
-        });
+    // Edit profile functionality
+    editButton.addEventListener('click', function() {
+        usernameInput.disabled = false;
+        usernameInput.classList.remove('input-disabled');
+        
+        editButton.style.display = 'none';
+        cancelButton.style.display = 'inline-block';
+        saveButton.style.display = 'inline-block';
     });
 
-    const form = document.querySelector('#form-change-password');
-    const passwordInput = document.getElementById('input-password');
-    const confirmInput = document.getElementById('confirm-password');
+    // Cancel edit functionality
+    cancelButton.addEventListener('click', function() {
+        usernameInput.disabled = true;
+        usernameInput.classList.add('input-disabled');
+        
+        editButton.style.display = 'inline-block';
+        cancelButton.style.display = 'none';
+        saveButton.style.display = 'none';
+        
+        // Reset to original value if needed
+        location.reload();
+    });
 
-    form.addEventListener('submit', function (e) {
-        if (passwordInput.value !== confirmInput.value) {
+    // Password confirmation validation
+    changePasswordForm.addEventListener('submit', function(e) {
+        const password = passwordInput.value;
+        const confirmPassword = confirmPasswordInput.value;
+
+        if (password !== confirmPassword) {
             e.preventDefault();
-            alert('Mật khẩu xác nhận không khớp');
-            confirmInput.focus();
+            alert('Mật khẩu xác nhận không khớp!');
+            return false;
+        }
+
+        if (password.length < 6) {
+            e.preventDefault();
+            alert('Mật khẩu phải có ít nhất 6 ký tự!');
+            return false;
         }
     });
 });

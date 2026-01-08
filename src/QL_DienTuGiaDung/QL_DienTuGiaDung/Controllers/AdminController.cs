@@ -4,314 +4,89 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using QL_DienTuGiaDung.BLL;
-using QL_DienTuGiaDung.DAL;
 using QL_DienTuGiaDung.Models;
 
 namespace QL_DienTuGiaDung.Controllers
 {
     public class AdminController : Controller
     {
-        private readonly AccountBLL _accountBLL;
-        private readonly ProductBLL _productBLL;
-        private readonly OrderBLL _orderBLL;
-        private readonly ThuongHieuBLL _thuongHieuBLL;
-        private readonly QuocGiaBLL _quocGiaBLL;
-        private readonly ThongKeBLL _thongKeBLL;
+         private readonly TaiKhoanBLL _taiKhoanBLL;
+         private readonly ThongKeBLL _thongKeBLL;
+         private readonly QuocGiaBLL _quocGiaBLL;
+         private readonly ThuongHieuBLL _thuongHieuBLL;
+         private readonly DonHangBLL _donHangBLL;
+         private readonly LoaiSanPhamBLL _loaiSanPhamBLL;
+         private readonly SanPhamBLL _sanPhamBLL;
+         private readonly AnhBLL _anhBLL;
 
-        public AdminController(AccountBLL accountBLL, ProductBLL productBLL, OrderBLL orderBLL, ThuongHieuBLL thuongHieuBLL, QuocGiaBLL quocGiaBLL, ThongKeBLL thongKeBLL)
+        public AdminController(TaiKhoanBLL taiKhoanBLL, ThongKeBLL thongKeBLL, QuocGiaBLL quocGiaBLL, ThuongHieuBLL thuongHieuBLL, DonHangBLL donHangBLL, LoaiSanPhamBLL loaiSanPhamBLL, SanPhamBLL sanPhamBLL, AnhBLL anhBLL)
         {
-            _accountBLL = accountBLL;
-            _productBLL = productBLL;
-            _orderBLL = orderBLL;
+            _taiKhoanBLL = taiKhoanBLL;
+            _thongKeBLL = thongKeBLL;
             _quocGiaBLL = quocGiaBLL;
             _thuongHieuBLL = thuongHieuBLL;
-            _thongKeBLL = thongKeBLL;
+            _donHangBLL = donHangBLL;
+            _loaiSanPhamBLL = loaiSanPhamBLL;
+            _sanPhamBLL = sanPhamBLL;
+            _anhBLL = anhBLL;
         }
 
         [Authorize(Roles = "1")]
+        [HttpGet]
         public IActionResult Index(string loaiThongKe = "nam", int? nam = null, int? quy = null)
         {
-            var breadcrumb = new List<(string Text, string? Url)>
+            ViewBag.Breadcrumb = new List<(string Text, string? Url)>
             {
-                ("Trang quản trị", Url.Action("Index", "Admin")),
-                ("Thống kê", Url.Action("Index", "Admin"))
+                ("Trang chủ", Url.Action("Index", "Admin")),
+                ("Thống kê", ""),
             };
 
-            ViewData["Breadcrumb"] = breadcrumb;
-
-            var availableYears = _thongKeBLL.GetAvailableYears();
-            if (!nam.HasValue && availableYears.Any())
-            {
-                nam = availableYears.First();
-            }
-
-            var filter = new ThongKeFilter
-            {
+            var filter = new ThongKeFilter 
+            { 
                 LoaiThongKe = loaiThongKe,
                 Nam = nam,
                 Quy = quy
             };
 
-            var thongKeData = _thongKeBLL.GetThongKeDoanhThu(filter);
+            var thongKe = _thongKeBLL.LayThongKeDoanhThu(filter);
+            var cacNam = _thongKeBLL.LayCacNamTonTai();
+
+            var tongDoanhThu = _thongKeBLL.LayTongDoanhThu(thongKe);
+            var tongDonHang = _thongKeBLL.LayTongDonHang(thongKe);
+            var tongSanPhamBan = _thongKeBLL.LayTongSanPhamBan(thongKe);
 
             ViewBag.Filter = filter;
-            ViewBag.AvailableYears = availableYears;
-            ViewBag.TongDoanhThu = _thongKeBLL.GetTongDoanhThu(thongKeData);
-            ViewBag.TongDonHang = _thongKeBLL.GetTongDonHang(thongKeData);
-            ViewBag.TongSanPhamBan = _thongKeBLL.GetTongSanPhamBan(thongKeData);
+            ViewBag.AvailableYears = cacNam;
+            ViewBag.TongDoanhThu = tongDoanhThu;
+            ViewBag.TongDonHang = tongDonHang;
+            ViewBag.TongSanPhamBan = tongSanPhamBan;
 
-            return View(thongKeData);
-        }
-
-        [Authorize(Roles = "1")]
-        public IActionResult Personal()
-        {
-            var breadcrumb = new List<(string Text, string? Url)>
-            {
-                ("Trang quản trị", Url.Action("Index", "Admin")),
-                ("Tài khoản", Url.Action("Personal", "Admin"))
-            };
-
-            ViewData["Breadcrumb"] = breadcrumb;
-
-            string tenTK = User.FindFirstValue(ClaimTypes.Name) ?? "";
-
-            var taiKhoan = _accountBLL.GetTaiKhoanByTenTK(tenTK);
-
-            return View(taiKhoan);
-        }
-
-        [Authorize(Roles = "1")]
-        public IActionResult Product(int productTypeId, string? searchTerm)
-        {
-            List<SanPham> products;
-            
-            if (!string.IsNullOrEmpty(searchTerm))
-            {
-                products = _productBLL.GetAllProductsByNameForAdmin(searchTerm, productTypeId);
-            }
-            else
-            {
-                products = _productBLL.GetAllProductsOrigin(productTypeId);
-            }
-
-            var productTypeName = products.FirstOrDefault()?.TenLSP ?? "Sản phẩm"; 
-
-            var breadcrumb = new List<(string Text, string? Url)>
-            {
-                ("Trang quản trị", Url.Action("Index", "Admin")),
-                ("Sản phẩm", Url.Action("Product", "Admin"))
-            };
-
-            if (productTypeId != 0)
-            {
-                breadcrumb.Add(
-                    (productTypeName, Url.Action("Product", "Admin", new { productTypeId }))
-                );
-            }
-
-            if (!string.IsNullOrEmpty(searchTerm))
-            {
-                breadcrumb.Add(
-                    ($"Tìm kiếm: \"{searchTerm}\"", null)
-                );
-            }
-
-            ViewData["Breadcrumb"] = breadcrumb;
-
-            ViewBag.ProductTypes = _productBLL.GetAllProductTypesForCustomer();
-            ViewBag.CurrentProductTypeId = productTypeId;
-            ViewBag.SearchTerm = searchTerm;
-
-            var canDeleteProducts = new Dictionary<int, bool>();
-            foreach (var product in products)
-            {
-                canDeleteProducts[product.MaSP] = _productBLL.CanDeleteProduct(product.MaSP);
-            }
-            ViewBag.CanDeleteProducts = canDeleteProducts;
-
-            return View(products);
-        }
-
-        [Authorize(Roles = "1")]
-        public IActionResult ProductDetail(int productId, int productTypeId)
-        {            
-            var productType = _productBLL.GetAllProductTypesForCustomer()
-                .Where(lsp => lsp.MaLSP == productTypeId)
-                .FirstOrDefault();
-
-            string productTypeName = productType?.TenLSP ?? "Sản phẩm";
-
-            var breadcrumb = new List<(string Text, string? Url)>
-            {
-                ("Trang quản trị", Url.Action("Index", "Admin")),
-                ("Sản phẩm", Url.Action("Product", "Admin"))
-            };
-
-            SanPham sanPham;
-
-            if (productId > 0)
-            {
-                sanPham = _productBLL.GetProductWithDetailsForAdmin(productId);
-                if (sanPham == null)
-                {
-                    TempData["Error"] = "Không tìm thấy sản phẩm";
-                    return RedirectToAction("Product");
-                }
-                
-                breadcrumb.Add((productTypeName, Url.Action("Product", "Admin", new { productTypeId = productTypeId })));
-                breadcrumb.Add((sanPham!.TenSP!, null));
-            }
-            else
-            {
-                sanPham = new SanPham
-                {
-                    MaLSP = productTypeId
-                };
-                
-                switch (productTypeId)
-                {
-                    case 1:
-                        sanPham.MayLanh = new MayLanh { MaSP = 0 };
-                        break;
-                    case 2:
-                        sanPham.TuLanh = new TuLanh { MaSP = 0 };
-                        break;
-                    case 3:
-                        sanPham.MayLocKhongKhi = new MayLocKhongKhi();
-                        break;
-                    case 4:
-                        sanPham.MayLocNuoc = new MayLocNuoc();
-                        break;
-                    case 5:
-                        sanPham.MayRuaChen = new MayRuaChen();
-                        break;
-                    case 6:
-                        sanPham.NoiComDien = new NoiComDien();
-                        break;
-                    case 7:
-                        sanPham.NoiChien = new NoiChien();
-                        break;
-                    case 8:
-                        sanPham.TiVi = new TiVi();
-                        break;
-                }
-                
-                breadcrumb.Add(("Thêm " + productTypeName.ToLower(), null));
-            }
-
-            ViewData["Breadcrumb"] = breadcrumb;
-            ViewBag.ProductTypeId = productTypeId;
-            ViewBag.ThuongHieu = _thuongHieuBLL.GetAllThuongHieu();
-            ViewBag.QuocGia = _quocGiaBLL.GetAllQuocGia();
-            
-            if (productId > 0)
-            {
-                ViewBag.ProductImages = _productBLL.GetProductImages(productId);
-            }
-            else
-            {
-                ViewBag.ProductImages = new List<Anh>();
-            }
-
-            return View(sanPham);
-        }
-
-        [Authorize(Roles = "1")]
-        [HttpPost]
-        public IActionResult ProductDetail(SanPham model)
-        {
-            try
-            {
-                if (model.MaSP == 0)
-                {
-                    _productBLL.CreateProductWithStoredProc(model);
-                    TempData["Message"] = "Thêm sản phẩm thành công";
-                }
-                else
-                {
-                    _productBLL.UpdateProductWithStoredProc(model);
-                    TempData["Message"] = "Cập nhật sản phẩm thành công";
-                }
-
-                return RedirectToAction("ProductDetail", new { productTypeId = model.MaLSP, productId = model.MaSP });
-            }
-            catch (Exception ex)
-            {
-                TempData["Error"] = "Có lỗi xảy ra: " + ex.Message;
-                
-                ViewBag.ProductTypeId = model.MaLSP;
-                ViewBag.ThuongHieu = _thuongHieuBLL.GetAllThuongHieu();
-                ViewBag.QuocGia = _quocGiaBLL.GetAllQuocGia();
-                
-                return View(model);
-            }
-        }
-
-        [Authorize(Roles = "1")]
-        [HttpPost]
-        public async Task<IActionResult> HandleUpdateTenTKAsync(string TenTK)
-        {
-            string oldTenTK = User.FindFirstValue(ClaimTypes.Name) ?? "";
-
-            _accountBLL.UpdateTenTK(oldTenTK, TenTK);
-            
-            var taiKhoan = _accountBLL.GetTaiKhoanByTenTK(TenTK) ?? new TaiKhoan();
-            
-            var claims = new List<Claim>
-            {
-                new Claim(ClaimTypes.NameIdentifier, taiKhoan.MaTK.ToString() ?? ""), 
-                new Claim(ClaimTypes.Name, taiKhoan.TenTK ?? ""),              
-                new Claim(ClaimTypes.Role, taiKhoan.QuyenTK.ToString() ?? ""),
-            };
-
-            var identity = new ClaimsIdentity(claims, "VElectricCookie");
-
-            var principal = new ClaimsPrincipal(identity);
-
-            await HttpContext.SignInAsync("VElectricCookie", principal);
-
-            TempData["Message"] = "Cập nhật tên đăng nhập thành công";
-
-            return RedirectToAction("Personal", "Admin");
-        }
-
-        [Authorize(Roles = "1")]
-        [HttpPost]
-        public IActionResult HandleChangePassword(string MatKhauTK)
-        {
-            string tenTK = User.FindFirstValue(ClaimTypes.Name) ?? "";
-
-            _accountBLL.ChangePassword(tenTK, MatKhauTK);
-
-            TempData["Message"] = "Đổi mật khẩu thành công";
-
-            return RedirectToAction("Personal", "Admin");
+            return View(thongKe);
         }
 
         [Authorize(Roles = "1")]
         [HttpGet]
-        public IActionResult Order()
+        public IActionResult DonHang()
         {
             var breadcrumb = new List<(string Text, string? Url)>
             {
                 ("Trang quản trị", Url.Action("Index", "Admin")),
-                ("Đơn hàng", Url.Action("Oreder", "Admin"))
+                ("Đơn hàng", Url.Action("DonHang", "Admin"))
             };
 
             ViewData["Breadcrumb"] = breadcrumb;
 
-            var donHangs = _orderBLL.GetOrders();
+            var donHangs = _donHangBLL.LayDanhSachDonHang(1);
 
-            ViewBag.TrangThaiDonHang = _orderBLL.GetAllTrangThaiDonHang();
-            ViewBag.TrangThaiThanhToan = _orderBLL.GetAllTrangThaiThanhToan();
+            ViewBag.TrangThaiDonHang = _donHangBLL.LayDanhSachTrangThaiDonHang();
+            ViewBag.TrangThaiThanhToan = _donHangBLL.LayDanhSachTrangThaiThanhToan();
 
             return View(donHangs);
         }
 
         [Authorize(Roles = "1")]
         [HttpPost]
-        public IActionResult UpdateTrangThaiDonHang(IFormCollection form)
+        public IActionResult CapNhatTrangThaiDonHang(IFormCollection form)
         {
             foreach (var key in form.Keys)
             {
@@ -320,17 +95,17 @@ namespace QL_DienTuGiaDung.Controllers
                     int maDH = int.Parse(key.Replace("MaTTDH", ""));
                     int maTTDH = int.Parse(form[key]!);
 
-                    _orderBLL.UpdateTrangThaiDonHang(maDH, maTTDH);
+                    int result = _donHangBLL.CapNhatTrangThaiDonHang(maDH, maTTDH);
+                    TempData["Message"] = result == 1 ? "Cập nhật trạng thái đơn hàng thành công" : "Cập nhật trạng thái đơn hàng thất bại";
                 }
             }
 
-            return RedirectToAction("Order");
+            return RedirectToAction("DonHang");
         }
 
         [Authorize(Roles = "1")]
         [HttpPost]
-        [HttpPost]
-        public IActionResult UpdateTrangThaiThanhToan(IFormCollection form)
+        public IActionResult CapNhatTrangThaiThanhToan(IFormCollection form)
         {
             string? maGiaoDich = form["MaGiaoDichTT"];
 
@@ -341,49 +116,52 @@ namespace QL_DienTuGiaDung.Controllers
                     int maDH = int.Parse(key.Replace("MaTTTT", ""));
                     int maTTTT = int.Parse(form[key]!);
 
-                    _orderBLL.UpdateTrangThaiThanhToan(maDH, maTTTT, maGiaoDich!);
+                    int result = _donHangBLL.CapNhatTrangThaiThanhToan(maDH, maTTTT, maGiaoDich!);
+                    TempData["Message"] = result == 1 ? "Cập nhật trạng thái thanh toán thành công" : "Cập nhật trạng thái thanh toán thất bại";
                 }
             }
 
-            return RedirectToAction("Order");
+            return RedirectToAction("DonHang");
         }
 
         [HttpGet]
-        public IActionResult Login()
+        public IActionResult DangNhap()
         {
-            var breadcrumb = new List<(string Text, string? Url)>
+            if (User.Identity?.IsAuthenticated ?? false)
             {
-                ("Trang quản trị", Url.Action("Index", "Admin")),
-                ("Đăng nhập", Url.Action("Login", "Admin"))
+                return RedirectToAction("Index", "Admin");
+            }
+
+            ViewBag.Breadcrumb = new List<(string Text, string? Url)>
+            {
+                ("Trang chủ", Url.Action("Index", "Admin")),
+                ("Đăng nhập trang quản trị", ""),
             };
-
-            ViewData["Breadcrumb"] = breadcrumb;
-
             return View();
         }
 
         [HttpPost]
-        public async Task<IActionResult> HandleLoginAsync(string userName, string password)
+        public async Task<IActionResult> DangNhapAsync(TaiKhoan taiKhoanModel)
         {
-            var taiKhoan = _accountBLL.GetTaiKhoanByTenTK(userName);
+            var taiKhoan = _taiKhoanBLL.LayTaiKhoanBangTenDangNhap(taiKhoanModel.TenTK.Trim());
 
             if (taiKhoan == null)
             {
-                TempData["Error"] = "Tên đăng nhập không tồn tại";
-                return RedirectToAction("Login");
+                TempData["Message"] = "Tên đăng nhập không tồn tại";
+                return RedirectToAction("DangNhap");
             } else
             {
                 var hasher = new PasswordHasher<object>();
                 var result = hasher.VerifyHashedPassword(
                     new object(),
                     (string)taiKhoan.MatKhauTK!,
-                    password
+                    taiKhoanModel.MatKhauTK.Trim()
                 );
 
                 if (result == PasswordVerificationResult.Failed)
                 {
-                    TempData["Error"] = "Sai mật khẩu";
-                    return RedirectToAction("Login");
+                    TempData["Message"] = "Sai mật khẩu";
+                    return RedirectToAction("DangNhap");
                 } else
                 {
                     var claims = new List<Claim>
@@ -405,339 +183,741 @@ namespace QL_DienTuGiaDung.Controllers
         }
 
         [Authorize(Roles = "1")]
-        [HttpPost]
-        public async Task<IActionResult> AddProductImage(int productId, int productTypeId, IFormFile imageFile, bool isDefault = false)
+        public IActionResult QuocGia()
         {
-            try
+            ViewBag.Breadcrumb = new List<(string Text, string? Url)>
             {
-                if (imageFile == null || imageFile.Length == 0)
-                {
-                    TempData["Error"] = "Vui lòng chọn file ảnh";
-                    return RedirectToAction("ProductDetail", new { productId, productTypeId });
-                }
+                ("Trang quản trị", Url.Action("Index", "Admin")),
+                ("Quốc gia", ""),
+            };
 
-                var allowedExtensions = new[] { ".jpg", ".jpeg", ".png", ".gif", ".webp" };
-                var fileExtension = Path.GetExtension(imageFile.FileName).ToLower();
-                if (!allowedExtensions.Contains(fileExtension))
-                {
-                    TempData["Error"] = "Chỉ chấp nhận file ảnh (.jpg, .jpeg, .png, .gif, .webp)";
-                    return RedirectToAction("ProductDetail", new { productId, productTypeId });
-                }
-
-                if (imageFile.Length > 5 * 1024 * 1024)
-                {
-                    TempData["Error"] = "File ảnh không được vượt quá 5MB";
-                    return RedirectToAction("ProductDetail", new { productId, productTypeId });
-                }
-
-                var fileName = $"{productId}_{Guid.NewGuid()}{fileExtension}";
-                var uploadsFolder = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "uploads", "images", "products");
-                
-                if (!Directory.Exists(uploadsFolder))
-                {
-                    Directory.CreateDirectory(uploadsFolder);
-                }
-
-                var filePath = Path.Combine(uploadsFolder, fileName);
-                
-                using (var fileStream = new FileStream(filePath, FileMode.Create))
-                {
-                    await imageFile.CopyToAsync(fileStream);
-                }
-
-                var imageUrl = $"/uploads/images/products/{fileName}";
-                _productBLL.AddProductImage(productId, imageUrl, isDefault);
-                
-                TempData["Message"] = "Thêm ảnh thành công";
-            }
-            catch (Exception ex)
+            var danhSachQuocGia = _quocGiaBLL.LayDanhSachQuocGia(1);
+            var coTheSuaXoa = new Dictionary<int, bool>();
+            
+            foreach (var quocGia in danhSachQuocGia)
             {
-                TempData["Error"] = "Có lỗi xảy ra: " + ex.Message;
+                coTheSuaXoa[quocGia.MaQG] = _quocGiaBLL.KiemTraCoTheSuaXoa(quocGia.MaQG);
             }
+            
+            ViewBag.CoTheSuaXoa = coTheSuaXoa;
 
-            return RedirectToAction("ProductDetail", new { productId, productTypeId });
+            return View(danhSachQuocGia);
         }
 
         [Authorize(Roles = "1")]
-        [HttpPost]
-        public IActionResult DeleteProductImage(int imageId, int productId, int productTypeId)
-        {
-            try
-            {
-                var images = _productBLL.GetProductImages(productId);
-                var imageToDelete = images.FirstOrDefault(x => x.MaAnh == imageId);
-                
-                _productBLL.DeleteProductImage(imageId);
-                
-                if (imageToDelete != null && !string.IsNullOrEmpty(imageToDelete.UrlAnh) && 
-                    imageToDelete.UrlAnh.StartsWith("/uploads/images/products/"))
-                {
-                    var fileName = Path.GetFileName(imageToDelete.UrlAnh);
-                    var filePath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "uploads", "images", "products", fileName);
-                    
-                    if (System.IO.File.Exists(filePath))
-                    {
-                        System.IO.File.Delete(filePath);
-                    }
-                }
-                
-                TempData["Message"] = "Xóa ảnh thành công";
-            }
-            catch (Exception ex)
-            {
-                TempData["Error"] = "Có lỗi xảy ra: " + ex.Message;
-            }
-
-            return RedirectToAction("ProductDetail", new { productId, productTypeId });
-        }
-
-        [Authorize(Roles = "1")]
-        [HttpPost]
-        public IActionResult SetDefaultImage(int imageId, int productId, int productTypeId)
-        {
-            try
-            {
-                _productBLL.SetDefaultImage(imageId, productId);
-                TempData["Message"] = "Đặt ảnh mặc định thành công";
-            }
-            catch (Exception ex)
-            {
-                TempData["Error"] = "Có lỗi xảy ra: " + ex.Message;
-            }
-
-            return RedirectToAction("ProductDetail", new { productId, productTypeId });
-        }
-
-        [Authorize(Roles = "1")]
-        [HttpPost]
-        public IActionResult DeleteProduct(int productId, int productTypeId)
-        {
-            try
-            {
-                if (!_productBLL.CanDeleteProduct(productId))
-                {
-                    TempData["Error"] = "Không thể xóa sản phẩm này vì đã có trong đơn hàng";
-                    return RedirectToAction("Product", new { productTypeId });
-                }
-
-                var images = _productBLL.GetProductImages(productId);
-                
-                _productBLL.DeleteProduct(productId);
-                
-                foreach (var image in images)
-                {
-                    if (!string.IsNullOrEmpty(image.UrlAnh) && image.UrlAnh.StartsWith("/uploads/images/products/"))
-                    {
-                        var fileName = Path.GetFileName(image.UrlAnh);
-                        var filePath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "uploads", "images", "products", fileName);
-                        
-                        if (System.IO.File.Exists(filePath))
-                        {
-                            System.IO.File.Delete(filePath);
-                        }
-                    }
-                }
-                
-                TempData["Message"] = "Xóa sản phẩm thành công";
-            }
-            catch (Exception ex)
-            {
-                TempData["Error"] = "Có lỗi xảy ra: " + ex.Message;
-            }
-
-            return RedirectToAction("Product", new { productTypeId });
-        }
-
-        [Authorize(Roles = "1")]
-        public IActionResult Country()
+        public IActionResult ChiTietQuocGia(int maQG = 0)
         {
             var breadcrumb = new List<(string Text, string? Url)>
             {
                 ("Trang quản trị", Url.Action("Index", "Admin")),
-                ("Quốc gia", Url.Action("Country", "Admin"))
+                ("Quốc gia", Url.Action("QuocGia", "Admin"))
             };
 
-            ViewData["Breadcrumb"] = breadcrumb;
-
-            var countries = _quocGiaBLL.GetAllQuocGiaForAdmin();
-            var canDeleteCountries = new Dictionary<int, bool>();
-            foreach (var country in countries)
+            QuocGia quocGia;
+            if (maQG > 0)
             {
-                canDeleteCountries[country.MaQG] = _quocGiaBLL.CanDeleteQuocGia(country.MaQG);
-            }
-            ViewBag.CanDeleteCountries = canDeleteCountries;
-
-            return View(countries);
-        }
-
-        [Authorize(Roles = "1")]
-        public IActionResult CountryDetail(int id = 0)
-        {
-            var breadcrumb = new List<(string Text, string? Url)>
-            {
-                ("Trang quản trị", Url.Action("Index", "Admin")),
-                ("Quốc gia", Url.Action("Country", "Admin"))
-            };
-
-            QuocGia country;
-            if (id > 0)
-            {
-                country = _quocGiaBLL.GetQuocGiaById(id) ?? new QuocGia();
-                breadcrumb.Add((country.TenQG ?? "Quốc gia", null));
+                quocGia = _quocGiaBLL.LayQuocGia(maQG) ?? new QuocGia();
+                breadcrumb.Add((quocGia.TenQG, ""));
             }
             else
             {
-                country = new QuocGia();
-                breadcrumb.Add(("Thêm quốc gia", null));
+                quocGia = new QuocGia();
+                breadcrumb.Add(("Thêm quốc gia", ""));
             }
 
-            ViewData["Breadcrumb"] = breadcrumb;
-            return View(country);
+            ViewBag.Breadcrumb = breadcrumb;
+            return View(quocGia);
         }
 
         [Authorize(Roles = "1")]
         [HttpPost]
-        public IActionResult CountryDetail(QuocGia model)
+        public IActionResult ChiTietQuocGia(QuocGia model)
         {
-            try
+            if (model.MaQG == 0)
             {
-                if (model.MaQG == 0)
+                var result = _quocGiaBLL.ThemQuocGia(model.TenQG);
+                if (result > 0)
                 {
-                    _quocGiaBLL.CreateQuocGia(model);
                     TempData["Message"] = "Thêm quốc gia thành công";
                 }
                 else
                 {
-                    _quocGiaBLL.UpdateQuocGia(model);
-                    TempData["Message"] = "Cập nhật quốc gia thành công";
+                    TempData["Message"] = "Thêm quốc gia thất bại";
                 }
-                return RedirectToAction("Country");
-            }
-            catch (Exception ex)
-            {
-                TempData["Error"] = "Có lỗi xảy ra: " + ex.Message;
-                return View(model);
-            }
-        }
-
-        [Authorize(Roles = "1")]
-        [HttpPost]
-        public IActionResult DeleteCountry(int id)
-        {
-            try
-            {
-                if (!_quocGiaBLL.CanDeleteQuocGia(id))
-                {
-                    TempData["Error"] = "Không thể xóa quốc gia này vì đã có thương hiệu";
-                    return RedirectToAction("Country");
-                }
-
-                _quocGiaBLL.DeleteQuocGia(id);
-                TempData["Message"] = "Xóa quốc gia thành công";
-            }
-            catch (Exception ex)
-            {
-                TempData["Error"] = "Có lỗi xảy ra: " + ex.Message;
-            }
-
-            return RedirectToAction("Country");
-        }
-
-        [Authorize(Roles = "1")]
-        public IActionResult Brand()
-        {
-            var breadcrumb = new List<(string Text, string? Url)>
-            {
-                ("Trang quản trị", Url.Action("Index", "Admin")),
-                ("Thương hiệu", Url.Action("Brand", "Admin"))
-            };
-
-            ViewData["Breadcrumb"] = breadcrumb;
-
-            var brands = _thuongHieuBLL.GetAllThuongHieuForAdmin();
-            var canDeleteBrands = new Dictionary<int, bool>();
-            foreach (var brand in brands)
-            {
-                canDeleteBrands[brand.MaTH] = _thuongHieuBLL.CanDeleteThuongHieu(brand.MaTH);
-            }
-            ViewBag.CanDeleteBrands = canDeleteBrands;
-
-            return View(brands);
-        }
-
-        [Authorize(Roles = "1")]
-        public IActionResult BrandDetail(int id = 0)
-        {
-            var breadcrumb = new List<(string Text, string? Url)>
-            {
-                ("Trang quản trị", Url.Action("Index", "Admin")),
-                ("Thương hiệu", Url.Action("Brand", "Admin"))
-            };
-
-            ThuongHieu brand;
-            if (id > 0)
-            {
-                brand = _thuongHieuBLL.GetThuongHieuById(id) ?? new ThuongHieu();
-                breadcrumb.Add((brand.TenTH ?? "Thương hiệu", null));
             }
             else
             {
-                brand = new ThuongHieu();
-                breadcrumb.Add(("Thêm thương hiệu", null));
+                var result = _quocGiaBLL.CapNhatQuocGia(model.MaQG, model.TenQG);
+                if (result > 0)
+                {
+                    TempData["Message"] = "Cập nhật quốc gia thành công";
+                }
+                else
+                {
+                    TempData["Message"] = "Cập nhật quốc gia thất bại";
+                }
             }
-
-            ViewData["Breadcrumb"] = breadcrumb;
-            ViewBag.QuocGia = _quocGiaBLL.GetAllQuocGia();
-            return View(brand);
+            return RedirectToAction("QuocGia");
         }
 
         [Authorize(Roles = "1")]
         [HttpPost]
-        public IActionResult BrandDetail(ThuongHieu model)
+        public IActionResult XoaQuocGia(int maQG)
         {
-            try
+            if (!_quocGiaBLL.KiemTraCoTheSuaXoa(maQG))
             {
-                if (model.MaTH == 0)
+                TempData["Message"] = "Không thể xóa quốc gia này vì đang được sử dụng";
+                return RedirectToAction("QuocGia");
+            }
+
+            var result = _quocGiaBLL.XoaQuocGia(maQG);
+            if (result > 0)
+            {
+                TempData["Message"] = "Xóa quốc gia thành công";
+            }
+            else
+            {
+                TempData["Message"] = "Xóa quốc gia thất bại";
+            }
+
+            return RedirectToAction("QuocGia");
+        }
+
+        [Authorize(Roles = "1")]
+        public IActionResult ThuongHieu()
+        {
+            ViewBag.Breadcrumb = new List<(string Text, string? Url)>
+            {
+                ("Trang quản trị", Url.Action("Index", "Admin")),
+                ("Danh mục thương hiệu", ""),
+            };
+
+            var danhSachThuongHieu = _thuongHieuBLL.LayDanhSachThuongHieu(1);
+            var coTheSuaXoa = new Dictionary<int, bool>();
+            
+            foreach (var thuongHieu in danhSachThuongHieu)
+            {
+                coTheSuaXoa[thuongHieu.MaTH] = _thuongHieuBLL.KiemTraCoTheSuaXoa(thuongHieu.MaTH);
+            }
+            
+            ViewBag.CoTheSuaXoa = coTheSuaXoa;
+
+            return View(danhSachThuongHieu);
+        }
+
+        [Authorize(Roles = "1")]
+        public IActionResult ChiTietThuongHieu(int maTH = 0)
+        {
+            var breadcrumb = new List<(string Text, string? Url)>
+            {
+                ("Trang quản trị", Url.Action("Index", "Admin")),
+                ("Danh mục thương hiệu", Url.Action("ThuongHieu", "Admin"))
+            };
+
+            ThuongHieu thuongHieu;
+            if (maTH > 0)
+            {
+                thuongHieu = _thuongHieuBLL.LayThuongHieu(maTH) ?? new ThuongHieu();
+                breadcrumb.Add((thuongHieu.TenTH, ""));
+            }
+            else
+            {
+                thuongHieu = new ThuongHieu();
+                breadcrumb.Add(("Thêm thương hiệu", ""));
+            }
+
+            var danhSachQuocGia = _quocGiaBLL.LayDanhSachQuocGia(1);
+            ViewBag.DanhSachQuocGia = danhSachQuocGia;
+            ViewBag.Breadcrumb = breadcrumb;
+            return View(thuongHieu);
+        }
+
+        [Authorize(Roles = "1")]
+        [HttpPost]
+        public IActionResult ChiTietThuongHieu(ThuongHieu model)
+        {
+            if (model.MaTH == 0)
+            {
+                var result = _thuongHieuBLL.ThemThuongHieu(model.MaQG, model.TenTH);
+                if (result > 0)
                 {
-                    _thuongHieuBLL.CreateThuongHieu(model);
                     TempData["Message"] = "Thêm thương hiệu thành công";
                 }
                 else
                 {
-                    _thuongHieuBLL.UpdateThuongHieu(model);
+                    TempData["Message"] = "Thêm thương hiệu thất bại";
+                }
+            }
+            else
+            {
+                var result = _thuongHieuBLL.CapNhatThuongHieu(model.MaTH, model.MaQG, model.TenTH);
+                if (result > 0)
+                {
                     TempData["Message"] = "Cập nhật thương hiệu thành công";
                 }
-                return RedirectToAction("Brand");
+                else
+                {
+                    TempData["Message"] = "Cập nhật thương hiệu thất bại";
+                }
             }
-            catch (Exception ex)
-            {
-                TempData["Error"] = "Có lỗi xảy ra: " + ex.Message;
-                ViewBag.QuocGia = _quocGiaBLL.GetAllQuocGia();
-                return View(model);
-            }
+            return RedirectToAction("ThuongHieu");
         }
 
         [Authorize(Roles = "1")]
         [HttpPost]
-        public IActionResult DeleteBrand(int id)
+        public IActionResult XoaThuongHieu(int maTH)
         {
-            try
+            if (!_thuongHieuBLL.KiemTraCoTheSuaXoa(maTH))
             {
-                if (!_thuongHieuBLL.CanDeleteThuongHieu(id))
+                TempData["Message"] = "Không thể xóa thương hiệu này vì đang được sử dụng";
+                return RedirectToAction("ThuongHieu");
+            }
+
+            var result = _thuongHieuBLL.XoaThuongHieu(maTH);
+            if (result > 0)
+            {
+                TempData["Message"] = "Xóa thương hiệu thành công";
+            }
+            else
+            {
+                TempData["Message"] = "Xóa thương hiệu thất bại";
+            }
+
+            return RedirectToAction("ThuongHieu");
+        }
+
+        [Authorize(Roles = "1")]
+        public IActionResult LoaiSanPham()
+        {
+            ViewBag.Breadcrumb = new List<(string Text, string? Url)>
+            {
+                ("Trang quản trị", Url.Action("Index", "Admin")),
+                ("Danh mục loại sản phẩm", ""),
+            };
+
+            var danhSachLoaiSanPham = _loaiSanPhamBLL.LayDanhSachLoaiSanPham(1);
+            var coTheSuaXoa = new Dictionary<int, bool>();
+            
+            foreach (var loaiSanPham in danhSachLoaiSanPham)
+            {
+                coTheSuaXoa[loaiSanPham.MaLSP] = _loaiSanPhamBLL.KiemTraCoTheSuaXoa(loaiSanPham.MaLSP);
+            }
+            
+            ViewBag.CoTheSuaXoa = coTheSuaXoa;
+
+            return View(danhSachLoaiSanPham);
+        }
+
+        [Authorize(Roles = "1")]
+        public IActionResult ChiTietLoaiSanPham(int maLSP = 0)
+        {
+            var breadcrumb = new List<(string Text, string? Url)>
+            {
+                ("Trang quản trị", Url.Action("Index", "Admin")),
+                ("Danh mục loại sản phẩm", Url.Action("LoaiSanPham", "Admin"))
+            };
+
+            LoaiSanPham loaiSanPham;
+            if (maLSP > 0)
+            {
+                loaiSanPham = _loaiSanPhamBLL.LayLoaiSanPham(maLSP) ?? new LoaiSanPham();
+                breadcrumb.Add((loaiSanPham.TenLSP, ""));
+            }
+            else
+            {
+                loaiSanPham = new LoaiSanPham();
+                breadcrumb.Add(("Thêm loại sản phẩm", ""));
+            }
+
+            ViewBag.Breadcrumb = breadcrumb;
+            return View(loaiSanPham);
+        }
+
+        [Authorize(Roles = "1")]
+        [HttpPost]
+        public IActionResult ChiTietLoaiSanPham(LoaiSanPham model)
+        {
+            if (_loaiSanPhamBLL.KiemTraTenLoaiSanPhamTonTai(model.TenLSP, model.MaLSP))
+            {
+                TempData["Message"] = "Tên loại sản phẩm đã tồn tại";
+                return RedirectToAction("ChiTietLoaiSanPham", new { maLSP = model.MaLSP });
+            }
+
+            if (model.MaLSP == 0)
+            {
+                var result = _loaiSanPhamBLL.ThemLoaiSanPham(model.TenLSP, model.ThueGTGTLSP);
+                if (result > 0)
                 {
-                    TempData["Error"] = "Không thể xóa thương hiệu này vì đã có sản phẩm";
-                    return RedirectToAction("Brand");
+                    TempData["Message"] = "Thêm loại sản phẩm thành công";
+                }
+                else
+                {
+                    TempData["Message"] = "Thêm loại sản phẩm thất bại";
+                }
+            }
+            else
+            {
+                var result = _loaiSanPhamBLL.CapNhatLoaiSanPham(model.MaLSP, model.TenLSP, model.ThueGTGTLSP, model.TrangThaiLSP);
+                if (result > 0)
+                {
+                    TempData["Message"] = "Cập nhật loại sản phẩm thành công";
+                }
+                else
+                {
+                    TempData["Message"] = "Cập nhật loại sản phẩm thất bại";
+                }
+            }
+            return RedirectToAction("LoaiSanPham");
+        }
+
+        [Authorize(Roles = "1")]
+        [HttpPost]
+        public IActionResult XoaLoaiSanPham(int maLSP)
+        {
+            if (!_loaiSanPhamBLL.KiemTraCoTheSuaXoa(maLSP))
+            {
+                TempData["Message"] = "Không thể xóa loại sản phẩm này vì đang được sử dụng";
+                return RedirectToAction("LoaiSanPham");
+            }
+
+            var result = _loaiSanPhamBLL.XoaLoaiSanPham(maLSP);
+            if (result > 0)
+            {
+                TempData["Message"] = "Xóa loại sản phẩm thành công";
+            }
+            else
+            {
+                TempData["Message"] = "Xóa loại sản phẩm thất bại";
+            }
+
+            return RedirectToAction("LoaiSanPham");
+        }
+
+        [Authorize(Roles = "1")]
+        public IActionResult SanPham(string searchTerm = "", int productTypeId = 0)
+        {
+            ViewBag.Breadcrumb = new List<(string Text, string? Url)>
+            {
+                ("Trang quản trị", Url.Action("Index", "Admin")),
+                ("Danh mục sản phẩm", ""),
+            };
+
+            var danhSachSanPham = _sanPhamBLL.LayDanhSachSanPham(1, productTypeId, searchTerm);
+            var coTheSuaXoa = new Dictionary<int, bool>();
+            
+            foreach (var sanPham in danhSachSanPham)
+            {
+                coTheSuaXoa[sanPham.MaSP] = _sanPhamBLL.KiemTraCoTheSuaXoaSanPham(sanPham.MaSP);
+            }
+            
+            ViewBag.CoTheSuaXoa = coTheSuaXoa;
+            ViewBag.SearchTerm = searchTerm;
+            ViewBag.CurrentProductTypeId = productTypeId;
+            ViewBag.ProductTypes = _loaiSanPhamBLL.LayDanhSachLoaiSanPham(1);
+
+            return View(danhSachSanPham);
+        }
+
+        [Authorize(Roles = "1")]
+        public IActionResult ChiTietSanPham(int maSP = 0)
+        {
+            var breadcrumb = new List<(string Text, string? Url)>
+            {
+                ("Trang quản trị", Url.Action("Index", "Admin")),
+                ("Danh mục sản phẩm", Url.Action("SanPham", "Admin"))
+            };
+
+            SanPham sanPham;
+            if (maSP > 0)
+            {
+                sanPham = _sanPhamBLL.LaySanPham(1, maSP) ?? new SanPham();
+                breadcrumb.Add((sanPham.TenSP, ""));
+            }
+            else
+            {
+                sanPham = new SanPham();
+                breadcrumb.Add(("Thêm sản phẩm", ""));
+            }
+
+            var danhSachQuocGia = _quocGiaBLL.LayDanhSachQuocGia(1);
+            var danhSachThuongHieu = _thuongHieuBLL.LayDanhSachThuongHieu(1);
+            var danhSachLoaiSanPham = _loaiSanPhamBLL.LayDanhSachLoaiSanPham(1);
+
+            ViewBag.DanhSachQuocGia = danhSachQuocGia;
+            ViewBag.DanhSachThuongHieu = danhSachThuongHieu;
+            ViewBag.DanhSachLoaiSanPham = danhSachLoaiSanPham;
+            ViewBag.Breadcrumb = breadcrumb;
+            
+            return View(sanPham);
+        }
+
+        [Authorize(Roles = "1")]
+        [HttpPost]
+        public IActionResult ChiTietSanPham(IFormCollection form)
+        {
+            if (!int.TryParse(form["MaLSP"], out int maLSP))
+            {
+                TempData["Message"] = "Loại sản phẩm không hợp lệ";
+                return RedirectToAction("SanPham");
+            }
+
+            SanPham model = maLSP switch
+            {
+                1 => new MayLanh(),
+                2 => new TuLanh(),
+                3 => new MayLocKhongKhi(),
+                4 => new MayLocNuoc(),
+                5 => new MayRuaChen(),
+                6 => new NoiComDien(),
+                7 => new NoiChien(),
+                8 => new TiVi(),
+                _ => new SanPham()
+            };
+
+            if (int.TryParse(form["MaSP"], out int maSP)) model.MaSP = maSP;
+            if (int.TryParse(form["MaQG"], out int maQG)) model.MaQG = maQG;
+            if (int.TryParse(form["MaTH"], out int maTH)) model.MaTH = maTH;
+            model.MaLSP = maLSP;
+            model.TenSP = form["TenSP"].ToString().Trim();
+            if (int.TryParse(form["SoLuongSP"], out int soLuong)) model.SoLuongSP = soLuong;
+            if (decimal.TryParse(form["GiaNhapSP"], out decimal giaNhap)) model.GiaNhapSP = giaNhap;
+            if (decimal.TryParse(form["GiaGocSP"], out decimal giaGoc)) model.GiaGocSP = giaGoc;
+            model.PhanLoaiSP = form["PhanLoaiSP"];
+            if (int.TryParse(form["NamSanXuatSP"], out int namSX)) model.NamSanXuatSP = namSX;
+            model.BaoHanhSP = form["BaoHanhSP"];
+            model.KichThuocSP = form["KichThuocSP"];
+            model.KhoiLuongSP = form["KhoiLuongSP"];
+            model.CongSuatTieuThuSP = form["CongSuatTieuThuSP"];
+            model.ChatLieuSP = form["ChatLieuSP"];
+            model.TienIchSP = form["TienIchSP"];
+            model.CongNgheSP = form["CongNgheSP"];
+            if (decimal.TryParse(form["MucGiamGiaSP"], out decimal mucGiam)) 
+            {
+                model.MucGiamGiaSP = mucGiam;
+            }
+            else
+            {
+                model.MucGiamGiaSP = 0;
+            }
+            if (DateTime.TryParse(form["NgayHetGiamGiaSP"], out DateTime ngayHet)) model.NgayHetGiamGiaSP = ngayHet;
+            if (int.TryParse(form["TrangThaiSP"], out int trangThai)) model.TrangThaiSP = trangThai;
+
+            switch (model)
+            {
+                case MayLanh ml:
+                    ml.CongSuatLamLanhML = form["CongSuatLamLanhML"];
+                    ml.PhamViLamLanhML = form["PhamViLamLanhML"];
+                    ml.DoOnML = form["DoOnML"];
+                    ml.LoaiGasML = form["LoaiGasML"];
+                    ml.CheDoGioML = form["CheDoGioML"];
+                    break;
+                case TuLanh tl:
+                    tl.DungTichNganDaTL = form["DungTichNganDaTL"];
+                    tl.DungTichNganLanhTL = form["DungTichNganLanhTL"];
+                    tl.LayNuocNgoaiTL = form["LayNuocNgoaiTL"];
+                    tl.LayDaTuDongTL = form["LayDaTuDongTL"];
+                    break;
+                case MayLocKhongKhi mlkk:
+                    mlkk.LoaiBuiLocDuocMLKK = form["LoaiBuiLocDuocMLKK"];
+                    mlkk.PhamViLocMLKK = form["PhamViLocMLKK"];
+                    mlkk.LuongGioMLKK = form["LuongGioMLKK"];
+                    mlkk.MangLocMLKK = form["MangLocMLKK"];
+                    mlkk.BangDieuKhienMLKK = form["BangDieuKhienMLKK"];
+                    mlkk.DoOnMLKK = form["DoOnMLKK"];
+                    mlkk.CamBienMLKK = form["CamBienMLKK"];
+                    break;
+                case MayLocNuoc mln:
+                    mln.KieuLapMLN = form["KieuLapMLN"];
+                    mln.CongSuatLocMLN = form["CongSuatLocMLN"];
+                    mln.TiLeLocThaiMLN = form["TiLeLocThaiMLN"];
+                    mln.ChiSoNuocMLN = form["ChiSoNuocMLN"];
+                    mln.DoPHThucTeMLN = form["DoPHThucTeMLN"];
+                    mln.ApLucNuocYeuCauMLN = form["ApLucNuocYeuCauMLN"];
+                    if (int.TryParse(form["SoLoiLocMLN"], out int soLoi)) mln.SoLoiLocMLN = soLoi;
+                    mln.BangDieuKhienMLN = form["BangDieuKhienMLN"];
+                    break;
+                case MayRuaChen mrc:
+                    mrc.NuocTieuThuMRC = form["NuocTieuThuMRC"];
+                    mrc.SoChenRuaDuocMRC = form["SoChenRuaDuocMRC"];
+                    mrc.DoOnMRC = form["DoOnMRC"];
+                    mrc.BangDieuKhienMRC = form["BangDieuKhienMRC"];
+                    mrc.ChieuDaiOngCapNuocMRC = form["ChieuDaiOngCapNuocMRC"];
+                    mrc.ChieuDaiOngThoatNuocMRC = form["ChieuDaiOngThoatNuocMRC"];
+                    break;
+                case NoiComDien ncd:
+                    ncd.DungTichNCD = form["DungTichNCD"];
+                    ncd.ChucNangNCD = form["ChucNangNCD"];
+                    ncd.DoDayNCD = form["DoDayNCD"];
+                    ncd.DieuKhienNCD = form["DieuKhienNCD"];
+                    ncd.ChieuDaiDayDienNCD = form["ChieuDaiDayDienNCD"];
+                    break;
+                case NoiChien nc:
+                    nc.DungTichTongNC = form["DungTichTongNC"];
+                    nc.DungTichSuDungNC = form["DungTichSuDungNC"];
+                    nc.NhietDoNC = form["NhietDoNC"];
+                    nc.HenGioNC = form["HenGioNC"];
+                    nc.BangDieuKhienNC = form["BangDieuKhienNC"];
+                    nc.ChieuDaiDayDienNC = form["ChieuDaiDayDienNC"];
+                    break;
+                case TiVi tv:
+                    tv.CoManHinhTV = form["CoManHinhTV"];
+                    tv.DoPhanGiaiTV = form["DoPhanGiaiTV"];
+                    tv.LoaiManHinhTV = form["LoaiManHinhTV"];
+                    tv.TanSoQuetTV = form["TanSoQuetTV"];
+                    tv.DieuKhienTV = form["DieuKhienTV"];
+                    tv.CongKetNoiTV = form["CongKetNoiTV"];
+                    break;
+            }
+
+            if (_sanPhamBLL.KiemTraTenSanPhamTonTai(model.TenSP, model.MaSP))
+            {
+                TempData["Message"] = "Tên sản phẩm đã tồn tại";
+                return RedirectToAction("ChiTietSanPham", new { maSP = model.MaSP });
+            }
+
+            if (model.MaSP == 0)
+            {
+                try
+                {
+                    var result = _sanPhamBLL.ThemSanPham(model);
+                    if (result > 0)
+                    {
+                        TempData["Message"] = "Thêm sản phẩm thành công";
+                    }
+                    else
+                    {
+                        TempData["Message"] = "Thêm sản phẩm thất bại";
+                    }
+                }
+                catch (Exception ex)
+                {
+                    TempData["Message"] = $"Lỗi thêm sản phẩm: {ex.Message}";
+                }
+            }
+            else
+            {
+                var result = _sanPhamBLL.CapNhatSanPham(model);
+                if (result > 0)
+                {
+                    TempData["Message"] = "Cập nhật sản phẩm thành công";
+                }
+                else
+                {
+                    TempData["Message"] = "Cập nhật sản phẩm thất bại";
+                }
+            }
+            return RedirectToAction("SanPham");
+        }
+
+        [Authorize(Roles = "1")]
+        [HttpPost]
+        public async Task<IActionResult> ThemAnhSanPham(int maSP, List<IFormFile> anhSanPham)
+        {
+            if (anhSanPham != null && anhSanPham.Count > 0)
+            {
+                var uploadsFolder = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "uploads", "images", "products");
+                Directory.CreateDirectory(uploadsFolder);
+
+                int successCount = 0;
+                foreach (var file in anhSanPham)
+                {
+                    if (file.Length > 0)
+                    {
+                        var fileName = $"{Guid.NewGuid()}_{Path.GetFileName(file.FileName)}";
+                        var filePath = Path.Combine(uploadsFolder, fileName);
+
+                        using (var stream = new FileStream(filePath, FileMode.Create))
+                        {
+                            await file.CopyToAsync(stream);
+                        }
+
+                        var urlAnh = $"/uploads/images/products/{fileName}";
+                        
+                        var anh = new Anh
+                        {
+                            MaSP = maSP,
+                            UrlAnh = urlAnh,
+                            MacDinhAnh = 0 
+                        };
+
+                        var result = _anhBLL.ThemAnh(anh);
+                        if (result > 0)
+                        {
+                            successCount++;
+                        }
+                    }
                 }
 
-                _thuongHieuBLL.DeleteThuongHieu(id);
-                TempData["Message"] = "Xóa thương hiệu thành công";
+                if (successCount > 0)
+                {
+                    TempData["Message"] = $"Thêm {successCount} ảnh thành công";
+                }
+                else
+                {
+                    TempData["Message"] = "Thêm ảnh thất bại";
+                }
+            }
+            else
+            {
+                TempData["Message"] = "Vui lòng chọn ảnh để thêm";
+            }
+
+            return RedirectToAction("ChiTietSanPham", new { maSP = maSP });
+        }
+
+        [Authorize(Roles = "1")]
+        [HttpPost]
+        public IActionResult XoaSanPham(int maSP)
+        {
+            if (!_sanPhamBLL.KiemTraCoTheSuaXoaSanPham(maSP))
+            {
+                TempData["Message"] = "Không thể xóa sản phẩm này vì đang được sử dụng";
+                return RedirectToAction("SanPham");
+            }
+
+            var result = _sanPhamBLL.XoaSanPham(maSP);
+            if (result > 0)
+            {
+                TempData["Message"] = "Xóa sản phẩm thành công";
+            }
+            else
+            {
+                TempData["Message"] = "Xóa sản phẩm thất bại";
+            }
+
+            return RedirectToAction("SanPham");
+        }
+
+        [Authorize(Roles = "1")]
+        [HttpPost]
+        public IActionResult XoaAnhSanPham(int maAnh, int maSP)
+        {
+            var result = _anhBLL.XoaAnh(maAnh);
+            if (result > 0)
+            {
+                TempData["Message"] = "Xóa ảnh thành công";
+            }
+            else
+            {
+                TempData["Message"] = "Xóa ảnh thất bại";
+            }
+            return RedirectToAction("ChiTietSanPham", new { maSP = maSP });
+        }
+
+        [Authorize(Roles = "1")]
+        [HttpPost]
+        public IActionResult DatAnhMacDinh(int maAnh, int maSP)
+        {
+            var result = _anhBLL.DatAnhMacDinh(maAnh, maSP);
+            if (result > 0)
+            {
+                TempData["Message"] = "Đặt ảnh mặc định thành công";
+            }
+            else
+            {
+                TempData["Message"] = "Đặt ảnh mặc định thất bại";
+            }
+            return RedirectToAction("ChiTietSanPham", new { maSP = maSP });
+        }
+
+        [Authorize(Roles = "1")]
+        [HttpGet]
+        public IActionResult ThongTin()
+        {
+            ViewBag.Breadcrumb = new List<(string Text, string? Url)>
+            {
+                ("Trang quản trị", Url.Action("Index", "Admin")),
+                ("Thông tin tài khoản", ""),
+            };
+
+            var taiKhoan = new TaiKhoan
+            {
+                MaTK = int.Parse(User.FindFirst(ClaimTypes.NameIdentifier)!.Value),
+                TenTK = User.FindFirst(ClaimTypes.Name)!.Value
+            };
+            
+            return View(taiKhoan);
+        }
+
+        [Authorize(Roles = "1")]
+        [HttpPost]
+        public async Task<IActionResult> HandleUpdateTenTK(TaiKhoan model)
+        {
+            int maTK = int.Parse(User.FindFirst(ClaimTypes.NameIdentifier)!.Value);
+            
+            if (string.IsNullOrWhiteSpace(model.TenTK))
+            {
+                TempData["Message"] = "Tên đăng nhập không được để trống";
+                return RedirectToAction("ThongTin");
+            }
+
+            if (_taiKhoanBLL.KiemTraTenDangNhapTonTai(model.TenTK, maTK))
+            {
+                TempData["Message"] = "Tên đăng nhập đã tồn tại";
+                return RedirectToAction("ThongTin");
+            }
+
+            try
+            {
+                var result = _taiKhoanBLL.CapNhatTenDangNhap(maTK, model.TenTK);
+                if (result > 0)
+                {
+                    var currentClaims = User.Claims.ToList();
+                    var newClaims = new List<Claim>
+                    {
+                        new Claim(ClaimTypes.NameIdentifier, maTK.ToString()),
+                        new Claim(ClaimTypes.Name, model.TenTK),
+                        new Claim(ClaimTypes.Role, User.FindFirst(ClaimTypes.Role)!.Value)
+                    };
+
+                    var identity = new ClaimsIdentity(newClaims, "VElectricCookie");
+                    var principal = new ClaimsPrincipal(identity);
+
+                    await HttpContext.SignOutAsync("VElectricCookie");
+                    await HttpContext.SignInAsync("VElectricCookie", principal);
+
+                    TempData["Message"] = "Cập nhật tên đăng nhập thành công";
+                }
+                else
+                {
+                    TempData["Message"] = "Cập nhật tên đăng nhập thất bại - Không thể lưu vào database";
+                }
             }
             catch (Exception ex)
             {
-                TempData["Error"] = "Có lỗi xảy ra: " + ex.Message;
+                TempData["Message"] = $"Lỗi cập nhật tên đăng nhập: {ex.Message}";
             }
 
-            return RedirectToAction("Brand");
+            return RedirectToAction("ThongTin");
+        }
+
+        [Authorize(Roles = "1")]
+        [HttpPost]
+        public IActionResult HandleChangePassword(TaiKhoan model)
+        {
+            int maTK = int.Parse(User.FindFirst(ClaimTypes.NameIdentifier)!.Value);
+            
+            if (string.IsNullOrWhiteSpace(model.MatKhauTK) || model.MatKhauTK.Length < 6)
+            {
+                TempData["Message"] = "Mật khẩu phải có ít nhất 6 ký tự";
+                return RedirectToAction("ThongTin");
+            }
+
+            var hasher = new PasswordHasher<object>();
+            var hashedPassword = hasher.HashPassword(new object(), model.MatKhauTK);
+
+            var result = _taiKhoanBLL.CapNhatMatKhau(maTK, hashedPassword);
+            if (result > 0)
+            {
+                TempData["Message"] = "Đổi mật khẩu thành công";
+            }
+            else
+            {
+                TempData["Message"] = "Đổi mật khẩu thất bại";
+            }
+
+            return RedirectToAction("ThongTin");
         }
     }
 }
+  

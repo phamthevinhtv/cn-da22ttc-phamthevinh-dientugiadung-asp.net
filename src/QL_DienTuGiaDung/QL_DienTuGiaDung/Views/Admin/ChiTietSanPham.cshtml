@@ -1,0 +1,368 @@
+@model SanPham
+@{
+    var message = TempData["Message"] as string;
+    var danhSachQuocGia = ViewBag.DanhSachQuocGia as List<QuocGia>;
+    var danhSachThuongHieu = ViewBag.DanhSachThuongHieu as List<ThuongHieu>;
+    var danhSachLoaiSanPham = ViewBag.DanhSachLoaiSanPham as List<LoaiSanPham>;
+}
+
+@section Styles {
+    <link rel="stylesheet" href="~/css/admin.css" asp-append-version="true"/>
+}
+
+<div class="admin-product-detail-wrapper">
+    <form asp-action="ChiTietSanPham" method="post" id="admin-product-detail-form" enctype="multipart/form-data">
+        <input type="hidden" asp-for="MaSP" />
+        <h3>@(Model.MaSP == 0 ? "Thêm sản phẩm" : "Chi tiết sản phẩm")</h3>
+        
+        <div asp-validation-summary="All" style="color: var(--color-danger); font-size: 1.4rem; margin-bottom: 15px;"></div>
+        
+        <div class="admin-product-detail-form-row">
+            <div class="admin-product-detail-form-group">
+                <label asp-for="TenSP">Tên sản phẩm:</label>
+                <input class="input" style="width: 100%;" type="text" asp-for="TenSP" placeholder="Nhập tên sản phẩm">
+                <span asp-validation-for="TenSP" style="font-size: 1.4rem; color: var(--color-danger);"></span>
+            </div>
+        </div>
+
+        <div class="admin-product-detail-form-row">
+            <div class="admin-product-detail-form-group">
+                <label asp-for="MaLSP">Loại sản phẩm:</label>
+                <select class="select" style="width: 100%;" asp-for="MaLSP" id="loaiSanPham" onchange="showHidePartials()">
+                    <option value="">-- Chọn loại sản phẩm --</option>
+                    @if (danhSachLoaiSanPham != null)
+                    {
+                        @foreach (var loai in danhSachLoaiSanPham)
+                        {
+                            <option value="@loai.MaLSP">@loai.TenLSP</option>
+                        }
+                    }
+                </select>
+                <span asp-validation-for="MaLSP" style="font-size: 1.4rem; color: var(--color-danger);"></span>
+            </div>
+        </div>
+
+        <div class="admin-product-detail-form-row">
+            <div class="admin-product-detail-form-group">
+                <label asp-for="MaQG">Quốc gia:</label>
+                <select class="select" style="width: 100%;" asp-for="MaQG">
+                    <option value="">-- Chọn quốc gia --</option>
+                    @if (danhSachQuocGia != null)
+                    {
+                        @foreach (var quocGia in danhSachQuocGia)
+                        {
+                            <option value="@quocGia.MaQG">@quocGia.TenQG</option>
+                        }
+                    }
+                </select>
+                <span asp-validation-for="MaQG" style="font-size: 1.4rem; color: var(--color-danger);"></span>
+            </div>
+        </div>
+
+        <div class="admin-product-detail-form-row">
+            <div class="admin-product-detail-form-group">
+                <label asp-for="MaTH">Thương hiệu:</label>
+                <select class="select" style="width: 100%;" asp-for="MaTH">
+                    <option value="">-- Chọn thương hiệu --</option>
+                    @if (danhSachThuongHieu != null)
+                    {
+                        @foreach (var thuongHieu in danhSachThuongHieu)
+                        {
+                            <option value="@thuongHieu.MaTH">@thuongHieu.TenTH</option>
+                        }
+                    }
+                </select>
+                <span asp-validation-for="MaTH" style="font-size: 1.4rem; color: var(--color-danger);"></span>
+            </div>
+        </div>
+
+        <div class="admin-product-detail-form-row">
+            <div class="admin-product-detail-form-group">
+                <label asp-for="GiaNhapSP">Giá nhập:</label>
+                <input class="input" style="width: 100%;" type="number" asp-for="GiaNhapSP" step="0.01" min="0" placeholder="Nhập giá nhập">
+                <span asp-validation-for="GiaNhapSP" style="font-size: 1.4rem; color: var(--color-danger);"></span>
+            </div>
+        </div>
+
+        <div class="admin-product-detail-form-row">
+            <div class="admin-product-detail-form-group">
+                <label asp-for="GiaGocSP">Giá gốc:</label>
+                <input class="input" style="width: 100%;" type="number" asp-for="GiaGocSP" step="0.01" min="0" placeholder="Nhập giá gốc">
+                <span asp-validation-for="GiaGocSP" style="font-size: 1.4rem; color: var(--color-danger);"></span>
+            </div>
+        </div>
+
+        <div class="admin-product-detail-form-row">
+            <div class="admin-product-detail-form-group">
+                <label asp-for="SoLuongSP">Số lượng:</label>
+                <input class="input" style="width: 100%;" type="number" asp-for="SoLuongSP" min="0" placeholder="Nhập số lượng">
+                <span asp-validation-for="SoLuongSP" style="font-size: 1.4rem; color: var(--color-danger);"></span>
+            </div>
+        </div>
+
+        <div class="admin-product-detail-form-row">
+            <div class="admin-product-detail-form-group">
+                <label asp-for="PhanLoaiSP">Phân loại:</label>
+                <input class="input" style="width: 100%;" type="text" asp-for="PhanLoaiSP" placeholder="Nhập phân loại sản phẩm">
+                <span asp-validation-for="PhanLoaiSP" style="font-size: 1.4rem; color: var(--color-danger);"></span>
+            </div>
+        </div>
+
+        <div class="admin-product-detail-form-row">
+            <div class="admin-product-detail-form-group">
+                <label asp-for="NamSanXuatSP">Năm sản xuất:</label>
+                <input class="input" style="width: 100%;" type="number" asp-for="NamSanXuatSP" min="1900" max="2030" placeholder="Nhập năm sản xuất">
+                <span asp-validation-for="NamSanXuatSP" style="font-size: 1.4rem; color: var(--color-danger);"></span>
+            </div>
+        </div>
+
+        <div class="admin-product-detail-form-row">
+            <div class="admin-product-detail-form-group">
+                <label asp-for="BaoHanhSP">Bảo hành:</label>
+                <input class="input" style="width: 100%;" type="text" asp-for="BaoHanhSP" placeholder="Nhập thông tin bảo hành">
+                <span asp-validation-for="BaoHanhSP" style="font-size: 1.4rem; color: var(--color-danger);"></span>
+            </div>
+        </div>
+
+        <div class="admin-product-detail-form-row">
+            <div class="admin-product-detail-form-group">
+                <label asp-for="KichThuocSP">Kích thước:</label>
+                <input class="input" style="width: 100%;" type="text" asp-for="KichThuocSP" placeholder="Nhập kích thước">
+                <span asp-validation-for="KichThuocSP" style="font-size: 1.4rem; color: var(--color-danger);"></span>
+            </div>
+        </div>
+
+        <div class="admin-product-detail-form-row">
+            <div class="admin-product-detail-form-group">
+                <label asp-for="KhoiLuongSP">Khối lượng:</label>
+                <input class="input" style="width: 100%;" type="text" asp-for="KhoiLuongSP" placeholder="Nhập khối lượng">
+                <span asp-validation-for="KhoiLuongSP" style="font-size: 1.4rem; color: var(--color-danger);"></span>
+            </div>
+        </div>
+
+        <div class="admin-product-detail-form-row">
+            <div class="admin-product-detail-form-group">
+                <label asp-for="CongSuatTieuThuSP">Công suất tiêu thụ:</label>
+                <input class="input" style="width: 100%;" type="text" asp-for="CongSuatTieuThuSP" placeholder="Nhập công suất tiêu thụ">
+                <span asp-validation-for="CongSuatTieuThuSP" style="font-size: 1.4rem; color: var(--color-danger);"></span>
+            </div>
+        </div>
+
+        <div class="admin-product-detail-form-row">
+            <div class="admin-product-detail-form-group">
+                <label asp-for="ChatLieuSP">Chất liệu:</label>
+                <input class="input" style="width: 100%;" type="text" asp-for="ChatLieuSP" placeholder="Nhập chất liệu">
+                <span asp-validation-for="ChatLieuSP" style="font-size: 1.4rem; color: var(--color-danger);"></span>
+            </div>
+        </div>
+
+        <div class="admin-product-detail-form-row">
+            <div class="admin-product-detail-form-group">
+                <label asp-for="TienIchSP">Tiện ích:</label>
+                <input class="input" style="width: 100%;" type="text" asp-for="TienIchSP" placeholder="Nhập tiện ích">
+                <span asp-validation-for="TienIchSP" style="font-size: 1.4rem; color: var(--color-danger);"></span>
+            </div>
+        </div>
+
+        <div class="admin-product-detail-form-row">
+            <div class="admin-product-detail-form-group">
+                <label asp-for="CongNgheSP">Công nghệ:</label>
+                <input class="input" style="width: 100%;" type="text" asp-for="CongNgheSP" placeholder="Nhập công nghệ">
+                <span asp-validation-for="CongNgheSP" style="font-size: 1.4rem; color: var(--color-danger);"></span>
+            </div>
+        </div>
+
+        <div class="admin-product-detail-form-row">
+            <div class="admin-product-detail-form-group">
+                <label asp-for="MucGiamGiaSP">Mức giảm giá (%):</label>
+                <input class="input" style="width: 100%;" type="number" asp-for="MucGiamGiaSP" step="0.01" placeholder="Nhập mức giảm giá">
+                <span asp-validation-for="MucGiamGiaSP" style="font-size: 1.4rem; color: var(--color-danger);"></span>
+            </div>
+        </div>
+
+        <div class="admin-product-detail-form-row">
+            <div class="admin-product-detail-form-group">
+                <label asp-for="NgayHetGiamGiaSP">Ngày hết giảm giá:</label>
+                <input class="input" style="width: 100%;" type="date" asp-for="NgayHetGiamGiaSP">
+                <span asp-validation-for="NgayHetGiamGiaSP" style="font-size: 1.4rem; color: var(--color-danger);"></span>
+            </div>
+        </div>
+
+
+
+        @if (Model.MaSP > 0)
+        {
+            <div class="admin-product-detail-form-row">
+                <div class="admin-product-detail-form-group">
+                    <label asp-for="TrangThaiSP">Trạng thái:</label>
+                    <select class="select" style="width: 100%;" asp-for="TrangThaiSP">
+                        <option value="1">Hoạt động</option>
+                        <option value="0">Không hoạt động</option>
+                    </select>
+                    <span asp-validation-for="TrangThaiSP" style="font-size: 1.4rem; color: var(--color-danger);"></span>
+                </div>
+            </div>
+        }
+
+        <div id="partial-maylanh" style="display: none;">
+            @await Html.PartialAsync("Partials/_MayLanh", Model as MayLanh ?? new MayLanh())
+        </div>
+
+        <div id="partial-tulanh" style="display: none;">
+            @await Html.PartialAsync("Partials/_TuLanh", Model as TuLanh ?? new TuLanh())
+        </div>
+
+        <div id="partial-maylockhongkhi" style="display: none;">
+            @await Html.PartialAsync("Partials/_MayLocKhongKhi", Model as MayLocKhongKhi ?? new MayLocKhongKhi())
+        </div>
+
+        <div id="partial-maylocnuoc" style="display: none;">
+            @await Html.PartialAsync("Partials/_MayLocNuoc", Model as MayLocNuoc ?? new MayLocNuoc())
+        </div>
+
+        <div id="partial-mayruachen" style="display: none;">
+            @await Html.PartialAsync("Partials/_MayRuaChen", Model as MayRuaChen ?? new MayRuaChen())
+        </div>
+
+        <div id="partial-noicomdien" style="display: none;">
+            @await Html.PartialAsync("Partials/_NoiComDien", Model as NoiComDien ?? new NoiComDien())
+        </div>
+
+        <div id="partial-noichien" style="display: none;">
+            @await Html.PartialAsync("Partials/_NoiChien", Model as NoiChien ?? new NoiChien())
+        </div>
+
+        <div id="partial-tivi" style="display: none;">
+            @await Html.PartialAsync("Partials/_TiVi", Model as TiVi ?? new TiVi())
+        </div>
+
+        <button type="submit" class="button button-submit">Lưu</button>
+    </form>
+</div>
+
+@if (Model.MaSP > 0)
+{
+    <div class="admin-product-detail-wrapper admin-product-detail-image" style="margin-top: 20px;">
+        <h3>Quản lý ảnh sản phẩm</h3>
+        
+        <form asp-action="ThemAnhSanPham" method="post" enctype="multipart/form-data" class="admin-product-detail-form" style="margin-bottom: 20px;">
+            <input type="hidden" name="maSP" value="@Model.MaSP" />
+            <div class="admin-product-detail-form-row">
+                <div class="admin-product-detail-form-group">
+                    <label for="anhSanPham">Thêm ảnh mới:</label>
+                    <input class="input" style="width: 100%; padding: 2.8px; cursor: pointer;" type="file" name="anhSanPham" accept="image/*" multiple required>
+                </div>
+            </div>
+            <button type="submit" class="button" style="width: 100%;">Thêm ảnh</button>
+        </form>
+
+        @if (Model.ListAnh != null && Model.ListAnh.Any())
+        {
+            <div>
+                <label>Danh sách ảnh hiện tại:</label>
+                <div style="display: flex; flex-wrap: wrap; gap: 13px; margin-top: 10px;">
+                    @foreach (var anh in Model.ListAnh)
+                    {
+                        <div style="position: relative;" class="admin-product-detail-image-style">
+                            <img src="@anh.UrlAnh" alt="Ảnh sản phẩm">
+                            
+                            @if (anh.MacDinhAnh == 1)
+                            {
+                                <span style="position: absolute; top: 3px; right: 3px; background: #28a745; color: white; padding: 2px 6px; font-size: 1.2rem; border-radius: 3px;">Mặc định</span>
+                            }
+                            else
+                            {
+                                <div style="position: absolute; top: 0px; right: 3px; display: flex; gap: 2px;">
+                                    <form asp-action="DatAnhMacDinh" method="post" style="display: inline;">
+                                        <input type="hidden" name="maAnh" value="@anh.MaAnh" />
+                                        <input type="hidden" name="maSP" value="@Model.MaSP" />
+                                        <button type="submit" 
+                                                style="background: #007bff; color: white; border: none; padding: 2px 6px; font-size: 1.2rem; border-radius: 3px; cursor: pointer;" 
+                                                title="Đặt làm ảnh mặc định"
+                                                onclick="return confirm('Bạn có chắc muốn đặt ảnh này làm ảnh mặc định?')">
+                                            Đặt mặc định
+                                        </button>
+                                    </form>
+                                </div>
+                                <form asp-action="XoaAnhSanPham" method="post" style="position: absolute; top: 0px; left: 3px; display: inline;">
+                                    <input type="hidden" name="maAnh" value="@anh.MaAnh" />
+                                    <input type="hidden" name="maSP" value="@Model.MaSP" />
+                                    <button type="submit" 
+                                            style="background: #dc3545; color: white; border: none; padding: 2px 6px; font-size: 1.2rem; border-radius: 3px; cursor: pointer;" 
+                                            title="Xóa ảnh"
+                                            onclick="return confirm('Bạn có chắc muốn xóa ảnh này?')">
+                                        ×
+                                    </button>
+                                </form>
+                            }
+                        </div>
+                    }
+                </div>
+            </div>
+        }
+        else
+        {
+            <p style="color: #666; font-style: italic;">Chưa có ảnh nào cho sản phẩm này.</p>
+        }
+    </div>
+}
+
+@section Scripts {
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/jquery-validation/dist/jquery.validate.min.js"></script>
+    <script src="~/lib/jquery-validation-unobtrusive/jquery.validate.unobtrusive.min.js"></script>
+}
+
+<script>
+function showHidePartials() {
+    var loaiSanPham = document.getElementById('loaiSanPham').value;
+    
+    // Ẩn tất cả partials
+    document.getElementById('partial-maylanh').style.display = 'none';
+    document.getElementById('partial-tulanh').style.display = 'none';
+    document.getElementById('partial-maylockhongkhi').style.display = 'none';
+    document.getElementById('partial-maylocnuoc').style.display = 'none';
+    document.getElementById('partial-mayruachen').style.display = 'none';
+    document.getElementById('partial-noicomdien').style.display = 'none';
+    document.getElementById('partial-noichien').style.display = 'none';
+    document.getElementById('partial-tivi').style.display = 'none';
+    
+    switch(loaiSanPham) {
+        case '1':
+            document.getElementById('partial-maylanh').style.display = 'block';
+            break;
+        case '2':
+            document.getElementById('partial-tulanh').style.display = 'block';
+            break;
+        case '3':
+            document.getElementById('partial-maylockhongkhi').style.display = 'block';
+            break;
+        case '4':
+            document.getElementById('partial-maylocnuoc').style.display = 'block';
+            break;
+        case '5':
+            document.getElementById('partial-mayruachen').style.display = 'block';
+            break;
+        case '6':
+            document.getElementById('partial-noicomdien').style.display = 'block';
+            break;
+        case '7':
+            document.getElementById('partial-noichien').style.display = 'block';
+            break;
+        case '8':
+            document.getElementById('partial-tivi').style.display = 'block';
+            break;
+    }
+}
+
+document.addEventListener('DOMContentLoaded', function() {
+    showHidePartials();
+});
+</script>
+
+@if (!string.IsNullOrEmpty(message))
+{
+    <script>
+        alert(@Html.Raw(Json.Serialize(message)));
+    </script>
+}

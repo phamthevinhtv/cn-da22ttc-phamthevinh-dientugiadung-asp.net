@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("QL_DienTuGiaDung")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+f083be5edd0cac4ae07254b0af9d208acf52b23c")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+fab7eba2bc35539a8b90793c274dba6f4f2475c4")]
 [assembly: System.Reflection.AssemblyProductAttribute("QL_DienTuGiaDung")]
 [assembly: System.Reflection.AssemblyTitleAttribute("QL_DienTuGiaDung")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

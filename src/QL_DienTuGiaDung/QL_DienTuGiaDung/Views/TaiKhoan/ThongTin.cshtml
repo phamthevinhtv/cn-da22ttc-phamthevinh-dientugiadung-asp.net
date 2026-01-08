@@ -1,0 +1,108 @@
+@model TaiKhoanKhachHang
+
+@{
+    var message = TempData["Message"] as string;
+}
+
+@section Styles {
+    <link rel="stylesheet" href="~/css/taikhoan.css" asp-append-version="true"/>
+}
+
+<div class="account_info">
+    <div class="account_form">
+        <h3 class="account_form_heading">Thông tin cá nhân</h3>
+        <form method="post" asp-action="SuaThongTinCaNhan">
+            <div class="account_form_group">
+                <label>Số điện thoại:</label>
+                <input class="input" type="text" value="@Model?.KhachHang.SoDienThoaiKH" readonly />
+            </div>
+            <div class="account_form_group">
+                <label asp-for="KhachHang.TenKH">Họ tên:</label>
+                <input class="input" asp-for="KhachHang.TenKH" type="text" placeholder="Nhập họ tên" />
+                <span asp-validation-for="KhachHang.TenKH" class="account_form_group_message"></span>
+            </div>
+            <div class="account_form_group">
+                <label asp-for="KhachHang.EmailKH">Email:</label>
+                <input class="input" asp-for="KhachHang.EmailKH" type="email" placeholder="Nhập email (không bắt buộc)" />
+                <span asp-validation-for="KhachHang.EmailKH" class="account_form_group_message"></span>
+            </div>
+            <div class="account_form_group">
+                <div class="inline" style="justify-content: start;">
+                    <label asp-for="KhachHang.GioiTinhKH">Giới tính:</label>
+                    <div class="account_form_group_gender">
+                        <label>
+                            <input type="radio" name="KhachHang.GioiTinhKH" required value="1" @(Model?.KhachHang.GioiTinhKH == 1 ? "checked" : "")> Nam
+                        </label>
+                        <label>
+                            <input type="radio" name="KhachHang.GioiTinhKH" value="-1" @(Model?.KhachHang.GioiTinhKH == -1 ? "checked" : "")> Nữ
+                        </label>
+                        <label>
+                            <input type="radio" name="KhachHang.GioiTinhKH" value="0" @(Model?.KhachHang.GioiTinhKH == 0 ? "checked" : "")> Khác
+                        </label>
+                    </div>
+                </div>
+                <span asp-validation-for="KhachHang.GioiTinhKH" class="account_form_group_message"></span>
+            </div>
+            <button type="submit" class="button">Lưu</button>
+        </form>
+    </div>
+</div>
+
+<div class="account_info" style="margin-top: 12px;">
+    <div class="account_form">
+        <h3 class="account_form_heading">Địa chỉ nhận hàng</h3>
+        <div class="delivery_address">
+            @if (Model?.ListDiaChiNhanHang?.Count > 0)
+            {
+                foreach (var dcnh in Model.ListDiaChiNhanHang)
+                {
+                    <div class="delivery_address_item">
+                        <div class="delivery_address_item_left">
+                            <p>@dcnh.DiaChiString</p>
+                            <span>@(dcnh.DiaChiCuThe.MacDinhDCCT == 1 ? "(Mặc định)" : "")</span>
+                        </div>
+                        <div class="delivery_address_item_right">
+                            @if (dcnh.DiaChiCuThe.MacDinhDCCT == 0) {
+                                <form method="post" asp-action="DatDiaChiMacDinh" onsubmit="return confirm('Bạn có chắc muốn đặt địa chỉ này làm mặc định không?');">
+                                    <input type="hidden" name="MaDCCT" value="@(dcnh?.DiaChiCuThe.MaDCCT ?? 0)" />
+                                    <button class="delivery_address_item_right_set_default">
+                                        <span class="material-symbols-outlined">keep</span>
+                                        Đặt làm mặc định
+                                    </button>
+                                </form>
+                            }
+                            @if (dcnh.DuocSuaXoa == 1) {
+                                <a asp-action="DiaChiNhanHang" asp-route-madc="@dcnh.DiaChiCuThe.MaDCCT" class="delivery_address_item_right_edit">
+                                    <span class="material-symbols-outlined">edit</span>
+                                    Sửa
+                                </a>
+                                @if (dcnh.DiaChiCuThe.MacDinhDCCT == 0) {
+                                    <form method="post" asp-action="XoaDiaChi" onsubmit="return confirm('Bạn có chắc muốn xóa địa chỉ này không?');">
+                                        <input type="hidden" name="MaDCCT" value="@(dcnh?.DiaChiCuThe.MaDCCT ?? 0)" />
+                                        <button class="delivery_address_item_right_delete">
+                                            <span class="material-symbols-outlined">delete</span>
+                                            Xóa
+                                        </button>
+                                    </form>
+                                }
+                            }
+                        </div>
+                    </div>
+                }
+            }
+        </div>
+
+        <a asp-action="DiaChiNhanHang" class="button dashed">Thêm địa chỉ mới</a>
+    </div>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}
+
+@if (!string.IsNullOrEmpty(message))
+{
+    <script>
+        alert('@Html.Raw(message)');
+    </script>
+}

@@ -1,0 +1,185 @@
+@using System.Globalization
+@using System.Security.Claims
+@model SanPham
+
+@section Styles {
+    <link rel="stylesheet" href="~/css/sanpham.css" asp-append-version="true"/>
+}
+
+@{
+    var message = TempData["Message"] as string;
+
+    int maKH = int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier) ?? "4");
+    var dgKHHienTai = @Model.ListDanhGia.FirstOrDefault(dg => dg.MaKH == maKH);
+}
+
+@if(Model != null) {
+    <div class="product_detail_row top">
+        <div class="product_detail_col product_image_slider"
+            data-images='@Html.Raw(System.Text.Json.JsonSerializer.Serialize(
+                Model.ListAnh?.Select(x => x.UrlAnh)))'>
+            <button class="product_image_slider_nav left">❮</button>
+            <img id="slider_image" src="@Model.ListAnh?.FirstOrDefault()?.UrlAnh" alt="Ảnh @Model.TenSP" />
+            <button class="product_image_slider_nav right">❯</button>
+        </div> 
+        <div class="product_detail_col right top">
+            <h3 class="product_detail_heading">@Model.TenSP</h3>
+            <div class="product_detail_col_inline">
+                @if(Model.DiemTrungBinhSP > 0) 
+                {
+                    <div class="product_detail_col_inline_group">
+                            <span>@Model.DiemTrungBinhSP.ToString("0.#")</span>
+                            <span class="material-symbols-outlined">star</span>
+                            <span>(@Model.SoLuotDGSP đánh giá)</span>
+                    </div>
+                }
+                @if (Model.SoLuongDaBanSP > 0) 
+                {
+                    <span>Đã bán @Model.SoLuongDaBanSP</span>
+                }
+            </div>
+            @if (Model.MucGiamGiaSP > 0) {
+                <div class="product_detail_col_inline">
+                    <del>@Model.GiaGocSauThueSP.ToString("N0", new CultureInfo("vi-VN"))</del>
+                    <span class="product_detail_discount_rate">-@Model.MucGiamGiaSP%</span>
+                </div>
+            }
+            <div class="product_detail_col_inline">
+                <span class="product_detail_discount_price">@Model.GiaSauGiamVaThueSP.ToString("N0", new CultureInfo("vi-VN"))</span>
+            </div>
+            <div class="product_detail_col_inline">
+                <form asp-controller="GioHang" asp-action="ThemSanPhamVaoGio" method="post">
+                    <input type="hidden" name="MaSP" value="@Model.MaSP" />
+                    <button class="button add_to_cart">Thêm vào giỏ</button>
+                </form>
+                <form asp-controller="GioHang" asp-action="MuaNgay" method="post">
+                    <input type="hidden" name="MaSP" value="@Model.MaSP" />
+                    <button class="button">Mua ngay</button>
+                </form>
+            </div>
+        </div> 
+    </div>
+
+    <div class="product_detail_row bottom">
+        <div class="product_detail_col">
+            <h3 class="product_detail_heading">Thông tin sản phẩm</h3>
+            <ul>
+                <li class="product_detail_info_item"><b>Thương hiệu:</b> @Model.TenTH</li>
+                <li class="product_detail_info_item"><b>Sản xuất tại:</b> @Model.TenQG</li>
+                <li class="product_detail_info_item"><b>Năm sản xuất:</b> @Model.NamSanXuatSP</li>
+                <li class="product_detail_info_item"><b>Phân loại:</b> @Model.PhanLoaiSP</li>
+                <li class="product_detail_info_item"><b>Thời gian bảo hành:</b> @Model.BaoHanhSP</li>
+                <li class="product_detail_info_item"><b>Kích thước:</b> @Model.KichThuocSP</li>
+                <li class="product_detail_info_item"><b>Khối lượng:</b> @Model.KhoiLuongSP</li>
+                <li class="product_detail_info_item"><b>Công suât tiêu thụ:</b> @Model.CongSuatTieuThuSP</li>
+                <li class="product_detail_info_item"><b>Chất liệu:</b> @Model.ChatLieuSP</li>
+                <li class="product_detail_info_item"><b>Tiện ích:</b> @Model.TienIchSP</li>
+                <li class="product_detail_info_item"><b>Công nghệ:</b> @Model.CongNgheSP</li>
+                @switch (Model.MaLSP)
+                {
+                    case 1:
+                        @await Html.PartialAsync("Partials/_MayLanh", (MayLanh)Model)
+                        break;
+
+                    case 2:
+                        @await Html.PartialAsync("Partials/_TuLanh", (TuLanh)Model)
+                        break;
+
+                    case 3:
+                        @await Html.PartialAsync("Partials/_MayLocKhongKhi", (MayLocKhongKhi)Model)
+                        break;
+
+                    case 4:
+                        @await Html.PartialAsync("Partials/_MayLocNuoc", (MayLocNuoc)Model)
+                        break;
+
+                    case 5:
+                        @await Html.PartialAsync("Partials/_MayRuaChen", (MayRuaChen)Model)
+                        break;
+
+                    case 6:
+                        @await Html.PartialAsync("Partials/_NoiComDien", (NoiComDien)Model)
+                        break;
+
+                    case 7:
+                        @await Html.PartialAsync("Partials/_NoiChien", (NoiChien)Model)
+                        break;
+
+                    case 8:
+                        @await Html.PartialAsync("Partials/_TiVi", (TiVi)Model)
+                        break;
+                }
+            </ul>
+        </div>
+        <div class="product_detail_col right bottom">
+            <div class="product_detail_col_item">
+                <h3 class="product_detail_heading">Đánh giá sản phẩm</h3>
+                <form method="post" asp-action="DanhGia" class="product_detail_rating_form">
+                    <div class="product_detail_rating_star_icon">
+                        <input type="radio" name="DiemDG" @((dgKHHienTai?.DiemDG ?? 0) == 5 ? "checked" : "") id="star5" value="5" required>
+                        <label for="star5"><span class="material-symbols-outlined">star</span></label>
+
+                        <input type="radio" name="DiemDG" @((dgKHHienTai?.DiemDG ?? 0) == 4 ? "checked" : "") id="star4" value="4">
+                        <label for="star4"><span class="material-symbols-outlined">star</span></label>
+
+                        <input type="radio" name="DiemDG" @((dgKHHienTai?.DiemDG ?? 0) == 3 ? "checked" : "") id="star3" value="3">
+                        <label for="star3"><span class="material-symbols-outlined">star</span></label>
+
+                        <input type="radio" name="DiemDG" @((dgKHHienTai?.DiemDG ?? 0) == 2 ? "checked" : "") id="star2" value="2">
+                        <label for="star2"><span class="material-symbols-outlined">star</span></label>
+
+                        <input type="radio" name="DiemDG" @((dgKHHienTai?.DiemDG ?? 0) == 1 ? "checked" : "") id="star1" value="1">
+                        <label for="star1"><span class="material-symbols-outlined">star</span></label>
+                    </div>
+                    <p class="product_detail_rating_message"></p>
+
+                    <textarea
+                        asp-for="@dgKHHienTai!.NhanXetDG"
+                        name="NhanXetDG"
+                        class="product_detail_review input"
+                        placeholder="Nhập nhận xét của bạn"
+                        rows="4"
+                        >
+                    </textarea>
+                    <input type="hidden" name="MaSP" value="@Model.MaSP">
+
+                    <button type="submit" class="product_detail_rating_submit button">
+                        Lưu
+                    </button>
+                </form>
+            </div>
+            @if (Model?.ListDanhGia?.Count > 0) {
+                <div class="product_detail_col_item">
+                    <h3 class="product_detail_heading">Đánh giá từ khách hàng</h3>
+                    <ul class="product_detail_rating_from_customer">
+                        @foreach (var danhGia in Model.ListDanhGia) {
+                            <li class="product_detail_rating_from_customer_item">
+                                <b>@danhGia.TenKH</b>
+                                <div>
+                                    @for(int i = 0; i < danhGia.DiemDG; i++) {
+                                        <span class="material-symbols-outlined">star</span>
+                                    }
+                                </div>
+                                <p>@danhGia.NhanXetDG</p>
+                                <small>@danhGia.NgayCapNhatDG.ToString("HH:mm - dd/MM/yyyy")</small>
+                            </li>
+                        }
+                    </ul>
+                </div>
+            }
+        </div>
+    </div>
+}
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+
+    <script src="~/js/sanpham.js" asp-append-version="true"></script>
+}
+
+@if (!string.IsNullOrEmpty(message))
+{
+    <script>
+        alert('@Html.Raw(message)');
+    </script>
+}

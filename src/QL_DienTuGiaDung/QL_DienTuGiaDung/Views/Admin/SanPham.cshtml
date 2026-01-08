@@ -1,0 +1,125 @@
+@model List<SanPham>
+@{
+    var message = TempData["Message"] as string;
+    var error = TempData["Error"] as string;
+}
+
+@section Styles {
+    <link rel="stylesheet" href="~/css/admin.css" asp-append-version="true"/>
+}
+
+<div class="admin-product-wrapper">
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; gap: 12px; flex-wrap: wrap;">
+        <form asp-action="SanPham" asp-controller="Admin" method="get" style="display: flex; flex: 1; gap: 6px;"  style="width: 100%;">
+            <input type="hidden" name="productTypeId" value="@ViewBag.CurrentProductTypeId" />
+            <input type="text" name="searchTerm" class="input" style="min-width: 200px; width: 100%;" placeholder="Tìm kiếm sản phẩm" value="@ViewBag.SearchTerm" />
+            <button type="submit" class="button">Tìm</button>
+            @if (!string.IsNullOrEmpty(ViewBag.SearchTerm))
+            {
+                <a href="@Url.Action("SanPham", "Admin", new { productTypeId = ViewBag.CurrentProductTypeId })" class="button" style="min-width: fit-content; background-color: #c8c8c8; border-color: #ebf0f5; color: var(--color-text-normal)">Đặt lại</a>
+            }
+        </form>
+        
+        <select class="select" style="width: fit-content;" id="productFilterSelect" onchange="redirectToFilter()">
+            @if (ViewBag.CurrentProductTypeId == 0)
+            {
+                <option value="@Url.Action("SanPham", "Admin", new { searchTerm = ViewBag.SearchTerm })" selected="selected">Tất cả sản phẩm</option>
+            }
+            else
+            {
+                <option value="@Url.Action("SanPham", "Admin", new { searchTerm = ViewBag.SearchTerm })">Tất cả sản phẩm</option>
+            }
+            @if (ViewBag.ProductTypes != null)
+            {
+                @foreach (var item in (List<LoaiSanPham>)ViewBag.ProductTypes)
+                {
+                    @if (ViewBag.CurrentProductTypeId == item.MaLSP)
+                    {
+                        <option value="@Url.Action("SanPham", "Admin", new { productTypeId = item.MaLSP, searchTerm = ViewBag.SearchTerm })" selected="selected">@item.TenLSP</option>
+                    }
+                    else
+                    {
+                        <option value="@Url.Action("SanPham", "Admin", new { productTypeId = item.MaLSP, searchTerm = ViewBag.SearchTerm })">@item.TenLSP</option>
+                    }
+                }
+            }
+        </select>
+        
+        <a asp-action="ChiTietSanPham" asp-controller="Admin" class="button">Thêm sản phẩm</a>
+    </div>
+
+    @if (Model.Count > 0)
+    {
+        <table class="admin-table">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Ảnh</th>
+                    <th>Tên sản phẩm</th>
+                    <th>Loại</th>
+                    <th>Thương hiệu</th>
+                    <th>Giá gốc</th>
+                    <th>Số lượng</th>
+                    <th>Trạng thái</th>
+                    <th>Thao tác</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var sanPham in Model)
+                { 
+                    <tr>
+                        <td>@sanPham.MaSP</td>
+                        <td>
+                            <img src="@(string.IsNullOrWhiteSpace(sanPham.UrlAnh) ? "/images/no_img.png" : sanPham.UrlAnh)" 
+                                 alt="@sanPham.TenSP" style="width: 50px; height: 50px; object-fit: cover;">
+                        </td>
+                        <td>@sanPham.TenSP</td>
+                        <td>@sanPham.TenLSP</td>
+                        <td>@sanPham.TenTH</td>
+                        <td>@sanPham.GiaGocSP.ToString("N0") VNĐ</td>
+                        <td>@sanPham.SoLuongSP</td>
+                        <td>@(sanPham.TrangThaiSP == 1 ? "Hoạt động" : "Không hoạt động")</td>
+                        <td>
+                            <div class="actions">
+                                <a asp-action="ChiTietSanPham" asp-controller="Admin" asp-route-maSP="@sanPham.MaSP" class="button button-edit">Sửa</a>
+                                @{
+                                    var coTheSuaXoa = ViewBag.CoTheSuaXoa as Dictionary<int, bool>;
+                                    bool coTheXoa = coTheSuaXoa?.ContainsKey(sanPham.MaSP) == true && coTheSuaXoa[sanPham.MaSP];
+                                }
+                                @if (coTheXoa)
+                                {
+                                    <form asp-action="XoaSanPham" asp-controller="Admin" method="post" style="display: inline;" 
+                                          onsubmit="return confirm('Bạn có chắc muốn xóa sản phẩm này?')">
+                                        <input type="hidden" name="maSP" value="@sanPham.MaSP" />
+                                        <button type="submit" class="button button-delete">Xóa</button>
+                                    </form>
+                                }
+                            </div>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    } 
+    else
+    {
+        <p>Danh sách sản phẩm hiện đang trống</p>
+    }
+</div>
+
+@if (!string.IsNullOrEmpty(message))
+{
+    <script>
+        alert(@Html.Raw(Json.Serialize(message)));
+    </script>
+}
+
+<script>
+function redirectToFilter() {
+    var select = document.getElementById('productFilterSelect');
+    var url = select.value;
+    if (url) {
+        window.location.href = url;
+    }
+}
+</script>

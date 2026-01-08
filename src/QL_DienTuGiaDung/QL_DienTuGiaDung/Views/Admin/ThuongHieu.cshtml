@@ -1,0 +1,77 @@
+@model List<ThuongHieu>
+@{
+    ViewData["HideSidebar"] = false;
+    ViewData["SidebarName"] = "_SidebarAdmin";
+    ViewData["SidebarType"] = "PartialView";
+    var message = TempData["Message"] as string;
+    var error = TempData["Error"] as string;
+}
+
+@section Styles {
+    <link rel="stylesheet" href="~/css/admin.css" asp-append-version="true"/>
+}
+
+<div class="admin-product-wrapper">
+    <div style="display: flex; justify-content: end; align-items: center; margin-bottom: 12px; gap: 12px;">
+        <a asp-action="ChiTietThuongHieu" asp-controller="Admin" class="button">Thêm thương hiệu</a>
+    </div>
+
+    @if (Model.Count > 0)
+    {
+        <table class="admin-table">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Tên thương hiệu</th>
+                    <th>Quốc gia</th>
+                    <th>Thao tác</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var thuongHieu in Model)
+                { 
+                    <tr>
+                        <td>@thuongHieu.MaTH</td>
+                        <td>@thuongHieu.TenTH</td>
+                        <td>@thuongHieu.TenQG</td>
+                        <td>
+                            <div class="actions">
+                                <a asp-action="ChiTietThuongHieu" asp-controller="Admin" asp-route-maTH="@thuongHieu.MaTH" class="button button-edit">Sửa</a>
+                                @{
+                                    var coTheSuaXoa = ViewBag.CoTheSuaXoa as Dictionary<int, bool>;
+                                    bool coTheXoa = coTheSuaXoa?.ContainsKey(thuongHieu.MaTH) == true && coTheSuaXoa[thuongHieu.MaTH];
+                                }
+                                @if (coTheXoa)
+                                {
+                                    <form asp-action="XoaThuongHieu" asp-controller="Admin" method="post" style="display: inline;" 
+                                          onsubmit="return confirm('Bạn có chắc muốn xóa thương hiệu này?')">
+                                        <input type="hidden" name="maTH" value="@thuongHieu.MaTH" />
+                                        <button type="submit" class="button button-delete">Xóa</button>
+                                    </form>
+                                }
+                            </div>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    } 
+    else
+    {
+        <p>Danh sách thương hiệu hiện đang trống</p>
+    }
+</div>
+
+@if (!string.IsNullOrEmpty(message))
+{
+    <script>
+        alert(@Html.Raw(Json.Serialize(message)));
+    </script>
+}
+
+@if (!string.IsNullOrEmpty(error))
+{
+    <script>
+        alert(@Html.Raw(Json.Serialize(error)));
+    </script>
+}

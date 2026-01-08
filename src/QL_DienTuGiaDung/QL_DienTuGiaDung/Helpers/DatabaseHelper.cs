@@ -1,5 +1,5 @@
-﻿using Microsoft.Data.SqlClient;
-using System.Data;
+﻿using System.Data;
+using Microsoft.Data.SqlClient;
 
 namespace QL_DienTuGiaDung.Helpers
 {
@@ -12,9 +12,12 @@ namespace QL_DienTuGiaDung.Helpers
             _connectionString = configuration.GetConnectionString("DefaultConnection") ?? throw new ArgumentNullException("DefaultConnection not found in configuration");
         }
 
-        public List<Dictionary<string, object?>> ExecuteQuery(string sqlQuery, CommandType type = CommandType.Text, SqlParameter[]? parameters = null)
+        public DataTable ExecuteDataTable(
+            string sqlQuery,
+            CommandType type = CommandType.Text,
+            SqlParameter[]? parameters = null)
         {
-            var result = new List<Dictionary<string, object?>>();
+            DataTable dataTable = new DataTable();
 
             using SqlConnection connection = new SqlConnection(_connectionString);
             using SqlCommand command = new SqlCommand(sqlQuery, connection);
@@ -25,25 +28,16 @@ namespace QL_DienTuGiaDung.Helpers
                 command.Parameters.AddRange(parameters);
             }
 
-            connection.Open();
+            using SqlDataAdapter adapter = new SqlDataAdapter(command);
+            adapter.Fill(dataTable);
 
-            using SqlDataReader reader = command.ExecuteReader();
-            while (reader.Read())
-            {
-                var row = new Dictionary<string, object?>();
-
-                for (int i = 0; i < reader.FieldCount; i++)
-                {
-                    row[reader.GetName(i)] = reader.IsDBNull(i) ? null : reader.GetValue(i);
-                }
-
-                result.Add(row);
-            }
-
-            return result;
+            return dataTable;
         }
 
-        public int ExecuteNonQuery(string sql, CommandType type = CommandType.Text, SqlParameter[]? parameters = null)
+        public int ExecuteNonQuery(
+            string sql,
+            CommandType type = CommandType.Text,
+            SqlParameter[]? parameters = null)
         {
             using var connection = new SqlConnection(_connectionString);
             using var command = new SqlCommand(sql, connection)
@@ -54,11 +48,30 @@ namespace QL_DienTuGiaDung.Helpers
             if (parameters != null)
                 command.Parameters.AddRange(parameters);
 
+            SqlParameter? returnParam = null;
+
+            if (type == CommandType.StoredProcedure)
+            {
+                returnParam = command.Parameters.Add(
+                    "@ReturnValue",
+                    SqlDbType.Int
+                );
+                returnParam.Direction = ParameterDirection.ReturnValue;
+            }
+
             connection.Open();
-            return command.ExecuteNonQuery();
+            int rowsAffected = command.ExecuteNonQuery();
+
+            if (returnParam != null && returnParam.Value != DBNull.Value)
+                return (int)returnParam.Value;
+
+            return rowsAffected;
         }
 
-        public object? ExecuteScalar(string sql, CommandType type = CommandType.Text, SqlParameter[]? parameters = null)
+        public object? ExecuteScalar(
+            string sql,
+            CommandType type = CommandType.Text,
+            SqlParameter[]? parameters = null)
         {
             using var connection = new SqlConnection(_connectionString);
             using var command = new SqlCommand(sql, connection)

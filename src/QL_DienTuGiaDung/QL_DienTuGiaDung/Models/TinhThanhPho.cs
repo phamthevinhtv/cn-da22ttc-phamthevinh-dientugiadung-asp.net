@@ -2,7 +2,7 @@
 {
     public class TinhThanhPho
     {
-        public string? MaTTP { get; set; }
-        public string? TenTTP { get; set; }
+        public string MaTTP { get; set; } = string.Empty;
+        public string TenTTP { get; set; } = string.Empty;
     }
 }

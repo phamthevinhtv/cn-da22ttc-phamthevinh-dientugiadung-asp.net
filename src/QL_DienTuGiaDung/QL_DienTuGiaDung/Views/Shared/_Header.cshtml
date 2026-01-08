@@ -1,62 +1,60 @@
-﻿@using System.Security.Claims
-
+@using System.Security.Claims
 @{
-    var breadcrumb = ViewData["Breadcrumb"] as List<(string Text, string Url)>;
-    var hideSidebar = (bool?)ViewData["HideSidebar"];
+    var breadcrumb = ViewBag.Breadcrumb as List<(string Text, string Url)>;
+    var currentController = ViewContext.RouteData.Values["controller"]?.ToString();
 
     var user = (ClaimsPrincipal)User;
-    var TenKH = user.FindFirstValue(ClaimTypes.Name) ?? "";
+    var TenHienThi = user.FindFirstValue(ClaimTypes.Name) ?? "";
     var roleStr = user.FindFirstValue(ClaimTypes.Role);
     int QuyenTK = int.TryParse(roleStr, out var r) ? r : -1;
 
     bool isAdminPage = Context.Request.Path.Value?.Contains("/Admin", StringComparison.OrdinalIgnoreCase) == true;
 }
-<header id="header">
-    <nav class="header-nav">
-        <div class="header-nav-top">
-            <a asp-controller="Product" asp-action="Index"><img src="/images/brand.svg" alt="Brand" class="brand"></a>
-            @if(!isAdminPage) {
-                <form asp-controller="Product" asp-action="HandleSearch" class="header-nav-top-search">
-                    <input type="text" class="input" name="tenSP" maxlength="100" placeholder="Tìm kiếm sản phẩm" required>
-                    <button class="material-symbols-outlined button">search</button>
+
+<div class="header">
+    <div class="header_content">
+        <div class="header_content_top">
+            <a href="/" class="header_content_top_logo">
+                <img src="~/images/logo.svg" alt="Logo VElectric">
+            </a>
+            @if(!isAdminPage) 
+            {
+                <form asp-controller="SanPham" asp-action="TimKiem" method="get" class="header_content_top_search">
+                    <input type="text" name="tukhoa" placeholder="Tìm kiếm sản phẩm" required>
+                    <button type="submit">
+                        <span class="material-symbols-outlined">search</span>
+                    </button>
                 </form>
             }
-            <ul class="header-nav-top-list">
+            <nav class="header_content_top_nav">
                 @if(QuyenTK != 1) {
-                    <li class="header-nav-top-list-item">
-                        @await Component.InvokeAsync("CartNumberItem")
-                    </li>
+                    <a asp-action="Index" asp-controller="GioHang" class="header_content_top_nav_item">
+                        <span class="material-symbols-outlined">shopping_cart</span>
+                        Giỏ hàng @await Component.InvokeAsync("SoSanPhamTrongGio")
+                    </a>
                 }
                 @if (!User.Identity?.IsAuthenticated ?? false) {
-                    <li class="header-nav-top-list-item button">
-                        <a asp-controller="Account" asp-action="Index" class="header-nav-top-list-link">
-                            <span class="material-symbols-outlined">person_check</span>
-                            Tài khoản
-                        </a>
-                    </li>
+                    <a asp-controller="TaiKhoan" asp-action="Index" class="header_content_top_nav_item primary">
+                        <span class="material-symbols-outlined">account_circle</span>
+                        Tài khoản
+                    </a>
                 } else {
                     @if(QuyenTK == 1) {
-                        <li class="header-nav-top-list-item">
-                            <a asp-controller="@(isAdminPage ? "Product" : "Admin")" asp-action="Index" class="header-nav-top-list-link">
-                                <span class="material-symbols-outlined">@(isAdminPage ? "open_in_new" : "admin_panel_settings")</span>
-                                @(isAdminPage ? "Xem trang" : "Quản trị")
-                            </a>
-                        </li>
-                    }
-                    <li class="header-nav-top-list-item user-name">
-                        <a asp-controller="@(QuyenTK != 1 ? "Account" : "Admin")" asp-action="Personal" class="header-nav-top-list-link">
-                            <span class="material-symbols-outlined">person_check</span>
-                            @TenKH
+                        <a asp-controller="@(isAdminPage ? "SanPham" : "Admin")" asp-action="Index" class="header_content_top_nav_item">
+                            <span class="material-symbols-outlined">@(isAdminPage ? "open_in_new" : "manage_accounts")</span>
+                            @(isAdminPage ? "Xem trang" : "Quản trị")
                         </a>
-                    </li>
+                    }
+                    <a asp-controller="@(QuyenTK == 1 ? "Admin" : "TaiKhoan")" asp-action="ThongTin" class="header_content_top_nav_item">
+                        <span class="material-symbols-outlined">account_circle</span>
+                        @TenHienThi
+                    </a>
                 }
-            </ul>
+            </nav>
         </div>
-        <div class="header-nav-bottom">
-            @if (hideSidebar != true) {
-                <span class="material-symbols-outlined" id="button-toggle-sidebar">density_medium</span>
-            }
-            <div class="breadcrumb">
+        <div class="header_content_bottom">
+            <span class="material-symbols-outlined header_content_bottom_icon_hamburger">density_medium</span>
+            <div class="header_content_bottom_breadcrumb">
             @if (breadcrumb != null)
             {
                 for (int i = 0; i < breadcrumb.Count; i++)
@@ -64,15 +62,15 @@
                     if (i < breadcrumb.Count - 1)
                     {
                         <a href="@breadcrumb[i].Url">@breadcrumb[i].Text</a>
-                        <span class="separator">&#187;</span>
+                        <span>&#187;</span>
                     }
                     else
                     {
-                        <span class="current">@breadcrumb[i].Text</span>
+                        <span>@breadcrumb[i].Text</span>
                     }
                 }
             }
             </div>
         </div>
-    </nav>
-</header>
+    </div>
+</div>

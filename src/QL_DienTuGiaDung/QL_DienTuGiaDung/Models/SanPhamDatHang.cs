@@ -4,9 +4,9 @@ namespace QL_DienTuGiaDung.Models
     {
         public int MaSP { get; set; }
         public int SoLuongDat { get; set; }
-        public string? TenSP { get; set; }
-        public decimal? GiaDatSauGiamVaThue { get; set; }
-        public string? UrlAnh { get; set; }
-        public decimal? ThanhTien => GiaDatSauGiamVaThue * SoLuongDat;
+        public string TenSP { get; set; } = string.Empty;
+        public decimal GiaDatSauGiamVaThue { get; set; }
+        public string UrlAnh { get; set; } = string.Empty;
+        public decimal ThanhTien => GiaDatSauGiamVaThue * SoLuongDat;
     }
 }

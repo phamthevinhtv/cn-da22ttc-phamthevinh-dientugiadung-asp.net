@@ -3,6 +3,6 @@
     public class QuocGia
     {
         public int MaQG { get; set; }
-        public string? TenQG { get; set; }
+        public string TenQG { get; set; } = string.Empty;
     }
 }

@@ -1,8 +1,5 @@
 @model List<ThongKeDoanhThu>
 @{
-    ViewData["HideSidebar"] = false;
-    ViewData["SidebarName"] = "_SidebarAdmin";
-    ViewData["SidebarType"] = "PartialView";
     var filter = ViewBag.Filter as ThongKeFilter;
     var availableYears = ViewBag.AvailableYears as List<int>;
     var tongDoanhThu = (decimal)ViewBag.TongDoanhThu;
@@ -19,7 +16,7 @@
         <form method="get" asp-action="Index" style="display: flex; gap: 12px; align-items: end; margin-bottom: 12px;">
             <div class="admin-product-detail-form-group">
                 <label>Loại thống kê:</label>
-                <select name="loaiThongKe" class="select" onchange="toggleFilters()">
+                <select name="loaiThongKe" class="select" style="width: 100%;" onchange="toggleFilters()">
                     <option value="nam">Theo năm</option>
                     <option value="quy">Theo quý</option>
                     <option value="thang">Theo tháng</option>
@@ -28,7 +25,7 @@
             
             <div class="admin-product-detail-form-group" id="yearFilter" style="display: none;">
                 <label>Năm:</label>
-                <select name="nam" class="select">
+                <select name="nam" class="select" style="width: 100%;">
                     @if (availableYears != null)
                     {
                         @foreach (var year in availableYears)
@@ -41,7 +38,7 @@
             
             <div class="admin-product-detail-form-group" id="quarterFilter" style="display: none;">
                 <label>Quý:</label>
-                <select name="quy" class="select">
+                <select name="quy" class="select" style="width: 100%;">
                     <option value="1">Quý 1</option>
                     <option value="2">Quý 2</option>
                     <option value="3">Quý 3</option>
@@ -59,11 +56,11 @@
             <p style="font-size: 2rem; font-weight: 600; margin: 0; color: #28a745;">@tongDoanhThu.ToString("N0") VNĐ</p>
         </div>
         <div class="summary-card" style="background: #ffffff; padding: 12px; border-radius: 4px; text-align: center;">
-            <h4 style="margin: 0 0 10px 0; color: #007bff;">Tổng đơn hàng</h4>
+            <h4 style="margin: 0 0 10px 0; color: #007bff;">Tổng đơn hàng đã hoàn thành</h4>
             <p style="font-size: 2rem; font-weight: 600; margin: 0; color: #007bff;">@tongDonHang</p>
         </div>
         <div class="summary-card" style="background: #ffffff; padding: 12px; border-radius: 4px; text-align: center;">
-            <h4 style="margin: 0 0 10px 0; color: #ffc107;">Sản phẩm bán</h4>
+            <h4 style="margin: 0 0 10px 0; color: #ffc107;">Sản phẩm đã bán</h4>
             <p style="font-size: 2rem; font-weight: 600; margin: 0; color: #ffc107;">@tongSanPhamBan</p>
         </div>
     </div>
@@ -126,14 +123,14 @@ document.addEventListener('DOMContentLoaded', function() {
     const namSelect = document.querySelector('select[name="nam"]');
     const quySelect = document.querySelector('select[name="quy"]');
     
-    if ('@filter?.LoaiThongKe' !== '') {
-        loaiThongKeSelect.value = '@filter?.LoaiThongKe';
+    if ('@(filter?.LoaiThongKe ?? "")' !== '') {
+        loaiThongKeSelect.value = '@(filter?.LoaiThongKe ?? "")';
     }
-    if ('@filter?.Nam' !== '') {
-        namSelect.value = '@filter?.Nam';
+    if ('@(filter?.Nam?.ToString() ?? "")' !== '') {
+        namSelect.value = '@(filter?.Nam?.ToString() ?? "")';
     }
-    if ('@filter?.Quy' !== '') {
-        quySelect.value = '@filter?.Quy';
+    if ('@(filter?.Quy?.ToString() ?? "")' !== '') {
+        quySelect.value = '@(filter?.Quy?.ToString() ?? "")';
     }
     
     toggleFilters();

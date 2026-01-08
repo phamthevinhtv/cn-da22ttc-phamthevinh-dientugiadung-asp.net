@@ -1,0 +1,72 @@
+@{
+    var currentController = ViewContext.RouteData.Values["controller"]?.ToString();
+    var currentAction = ViewContext.RouteData.Values["action"]?.ToString();
+}
+
+<div class="main_content_sidebar">
+    @switch (currentController)
+    {
+        case "TaiKhoan":
+            if (currentAction == "ThongTin" || currentAction == "LichSuMuaHang" || currentAction == "ThemDiaChi")
+            {
+                <h2 class="main_content_sidebar_heading">Cá nhân</h2>
+                <div class="main_content_sidebar_nav">
+                    <a asp-action="ThongTin" class="main_content_sidebar_nav_item">Thông tin cá nhân</a>
+                    <a asp-action="LichSuMuaHang" class="main_content_sidebar_nav_item">Lịch sử mua hàng</a>
+                    <form asp-action="DangXuat" method="post" class="main_content_sidebar_nav_item form" onsubmit="return confirm('Bạn có chắc muốn đăng xuất không?');">
+                        @Html.AntiForgeryToken()
+                        <button type="submit">Đăng xuất</button>
+                    </form>
+                </div>
+            }
+            break;
+
+        case "Admin":
+            @if (
+                currentAction == "Index" ||
+                currentAction == "QuocGia" ||
+                currentAction == "ThuongHieu" ||
+                currentAction == "LoaiSanPham" ||
+                currentAction == "SanPham" ||
+                currentAction == "DonHang" ||
+                currentAction == "ChiTietQuocGia" ||
+                currentAction == "ChiTietThuongHieu" ||
+                currentAction == "ChiTietLoaiSanPham" ||
+                currentAction == "ChiTietSanPham"
+            )
+            {
+                <h2 class="main_content_sidebar_heading">Quản trị</h2>
+                <div class="main_content_sidebar_nav">
+                    <a asp-action="Index" class="main_content_sidebar_nav_item">Thống kê</a>
+                    <a asp-action="LoaiSanPham" class="main_content_sidebar_nav_item">Loại sản phẩm</a>
+                    <a asp-action="SanPham" class="main_content_sidebar_nav_item">Sản phẩm</a>
+                    <a asp-action="DonHang" class="main_content_sidebar_nav_item">Đơn hàng</a>
+                    <a asp-action="QuocGia" class="main_content_sidebar_nav_item">Danh mục quốc gia</a>
+                    <a asp-action="ThuongHieu" class="main_content_sidebar_nav_item">Danh mục thương hiệu</a>
+                </div>
+            }
+            if (currentAction == "ThongTin")
+            {
+                <h2 class="main_content_sidebar_heading">Cá nhân</h2>
+                <div class="main_content_sidebar_nav">
+                    <a asp-action="ThongTin" class="main_content_sidebar_nav_item">Thông tin cá nhân</a>
+                    <form asp-action="DangXuat" asp-controller="TaiKhoan" method="post" class="main_content_sidebar_nav_item form" onsubmit="return confirm('Bạn có chắc muốn đăng xuất không?');">
+                        @Html.AntiForgeryToken()
+                        <button type="submit">Đăng xuất</button>
+                    </form>
+                </div>
+            }
+            break;
+
+        case "SanPham":
+            if (currentAction == "Index")
+            {
+                <h2 class="main_content_sidebar_heading">Danh mục sản phẩm</h2>
+                <div class="main_content_sidebar_nav">
+                    <a href="/" class="main_content_sidebar_nav_item">Tất cả sản phẩm</a>
+                    @await Component.InvokeAsync("LoaiSanPhamSidebar")
+                </div>
+            }
+            break;
+    }
+</div>

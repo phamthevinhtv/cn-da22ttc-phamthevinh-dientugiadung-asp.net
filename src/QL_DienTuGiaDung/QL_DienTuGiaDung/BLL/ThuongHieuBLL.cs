@@ -1,5 +1,6 @@
 using QL_DienTuGiaDung.Models;
 using QL_DienTuGiaDung.DAL;
+using System.Data;
 
 namespace QL_DienTuGiaDung.BLL
 {
@@ -12,39 +13,59 @@ namespace QL_DienTuGiaDung.BLL
             _thuongHieuDAL = thuongHieuDAL;
         }
 
-        public List<ThuongHieu> GetAllThuongHieu()
+        private static void MapThuongHieu(ThuongHieu thuongHieu, DataRow row)
         {
-            return _thuongHieuDAL.GetAllThuongHieu();
+            thuongHieu.MaTH = row["MaTH"] != DBNull.Value ? Convert.ToInt32(row["MaTH"]) : 0;
+            thuongHieu.MaQG = row["MaQG"] != DBNull.Value ? Convert.ToInt32(row["MaQG"]) : 0;
+            thuongHieu.TenTH = row["TenTH"] != DBNull.Value ? row["TenTH"].ToString()! : string.Empty;
+            thuongHieu.TenQG = row["TenQG"] != DBNull.Value ? row["TenQG"].ToString()! : string.Empty;
         }
 
-        public List<ThuongHieu> GetAllThuongHieuForAdmin()
+        public List<ThuongHieu> LayDanhSachThuongHieu(int quyen)
         {
-            return _thuongHieuDAL.GetAllThuongHieuForAdmin();
+            var dataTable = _thuongHieuDAL.LayDanhSachThuongHieu(quyen);
+            var result = new List<ThuongHieu>();
+
+            foreach (DataRow row in dataTable.Rows)
+            {
+                var thuongHieu = new ThuongHieu();
+                MapThuongHieu(thuongHieu, row);
+                result.Add(thuongHieu);
+            }
+
+            return result;
         }
 
-        public ThuongHieu? GetThuongHieuById(int id)
+        public ThuongHieu? LayThuongHieu(int maTH)
         {
-            return _thuongHieuDAL.GetThuongHieuById(id);
+            var dataTable = _thuongHieuDAL.LayThuongHieu(maTH);
+            
+            if (dataTable.Rows.Count == 0)
+                return null;
+
+            var thuongHieu = new ThuongHieu();
+            MapThuongHieu(thuongHieu, dataTable.Rows[0]);
+            return thuongHieu;
         }
 
-        public void CreateThuongHieu(ThuongHieu thuongHieu)
+        public int ThemThuongHieu(int maQG, string tenTH)
         {
-            _thuongHieuDAL.CreateThuongHieu(thuongHieu);
+            return _thuongHieuDAL.ThemThuongHieu(maQG, tenTH);
         }
 
-        public void UpdateThuongHieu(ThuongHieu thuongHieu)
+        public int CapNhatThuongHieu(int maTH, int maQG, string tenTH)
         {
-            _thuongHieuDAL.UpdateThuongHieu(thuongHieu);
+            return _thuongHieuDAL.CapNhatThuongHieu(maTH, maQG, tenTH);
         }
 
-        public bool CanDeleteThuongHieu(int id)
+        public bool KiemTraCoTheSuaXoa(int maTH)
         {
-            return _thuongHieuDAL.CanDeleteThuongHieu(id);
+            return _thuongHieuDAL.KiemTraCoTheSuaXoa(maTH);
         }
 
-        public void DeleteThuongHieu(int id)
+        public int XoaThuongHieu(int maTH)
         {
-            _thuongHieuDAL.DeleteThuongHieu(id);
+            return _thuongHieuDAL.XoaThuongHieu(maTH);
         }
     }
 }

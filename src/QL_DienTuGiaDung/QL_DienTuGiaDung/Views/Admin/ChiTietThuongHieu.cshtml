@@ -1,0 +1,44 @@
+@model ThuongHieu
+@{
+    var message = TempData["Message"] as string;
+}
+
+@section Styles {
+    <link rel="stylesheet" href="~/css/admin.css" asp-append-version="true"/>
+}
+
+<div class="admin-product-detail-wrapper">
+    <form asp-action="BrandDetail" method="post" id="admin-product-detail-form">
+        <input type="hidden" asp-for="MaTH" />
+        <h3>@(Model.MaTH == 0 ? "Thêm thương hiệu" : "Chi tiết thương hiệu")</h3>
+        
+        <div class="admin-product-detail-form-row">
+            <div class="admin-product-detail-form-group">
+                <label asp-for="TenTH">Tên thương hiệu:</label>
+                <input class="input" style="width: 100%;" type="text" asp-for="TenTH" required placeholder="Nhập tên thương hiệu">
+            </div>
+            <div class="admin-product-detail-form-group">
+                <label asp-for="MaQG">Quốc gia:</label>
+                <select asp-for="MaQG" class="select" style="width: 100%;" required>
+                    <option value="">-- Chọn quốc gia --</option>
+                    @if (ViewBag.QuocGia != null)
+                    {
+                        @foreach (var item in (List<QuocGia>)ViewBag.QuocGia)
+                        {
+                            <option value="@item.MaQG">@item.TenQG</option>
+                        }
+                    }
+                </select>
+            </div>
+        </div>
+
+        <button type="submit" class="button button-submit">Lưu</button>
+    </form>
+</div>
+
+@if (!string.IsNullOrEmpty(message))
+{
+    <script>
+        alert('@Html.Raw(message)');
+    </script>
+}

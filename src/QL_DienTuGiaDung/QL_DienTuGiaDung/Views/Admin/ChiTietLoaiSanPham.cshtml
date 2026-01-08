@@ -1,0 +1,51 @@
+@model LoaiSanPham
+@{
+    var message = TempData["Message"] as string;
+}
+
+@section Styles {
+    <link rel="stylesheet" href="~/css/admin.css" asp-append-version="true"/>
+}
+
+<div class="admin-product-detail-wrapper">
+    <form asp-action="ChiTietLoaiSanPham" method="post" id="admin-product-detail-form">
+        <input type="hidden" asp-for="MaLSP" />
+        <h3>@(Model.MaLSP == 0 ? "Thêm loại sản phẩm" : "Chi tiết loại sản phẩm")</h3>
+        
+        <div class="admin-product-detail-form-row">
+            <div class="admin-product-detail-form-group">
+                <label asp-for="TenLSP">Tên loại sản phẩm:</label>
+                <input class="input" style="width: 100%;" type="text" asp-for="TenLSP" required placeholder="Nhập tên loại sản phẩm">
+            </div>
+        </div>
+
+        <div class="admin-product-detail-form-row">
+            <div class="admin-product-detail-form-group">
+                <label asp-for="ThueGTGTLSP">Thuế GTGT (%):</label>
+                <input class="input" style="width: 100%;" type="number" asp-for="ThueGTGTLSP" step="0.01" min="0" max="100" required placeholder="Nhập thuế GTGT">
+            </div>
+        </div>
+
+        @if (Model.MaLSP > 0)
+        {
+            <div class="admin-product-detail-form-row">
+                <div class="admin-product-detail-form-group">
+                    <label asp-for="TrangThaiLSP">Trạng thái:</label>
+                    <select class="select" style="width: 100%;" asp-for="TrangThaiLSP">
+                        <option value="1">Hiển thị</option>
+                        <option value="0">Ẩn</option>
+                    </select>
+                </div>
+            </div>
+        }
+
+        <button type="submit" class="button button-submit">Lưu</button>
+    </form>
+</div>
+
+@if (!string.IsNullOrEmpty(message))
+{
+    <script>
+        alert(@Html.Raw(Json.Serialize(message)));
+    </script>
+}

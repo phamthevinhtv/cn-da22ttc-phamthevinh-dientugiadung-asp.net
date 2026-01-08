@@ -3,6 +3,6 @@
     public class TrangThaiThanhToan
     {
         public int MaTTTT { get; set; }
-        public string? TenTTTT { get; set; }
+        public string TenTTTT { get; set; } = string.Empty;
     }
 }

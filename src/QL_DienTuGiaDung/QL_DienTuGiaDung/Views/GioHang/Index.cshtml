@@ -1,0 +1,151 @@
+@using System.Globalization
+@model GioHang
+
+@section Styles {
+    <link rel="stylesheet" href="~/css/giohang.css" asp-append-version="true"/>
+}
+
+@{
+    var message = TempData["Message"] as string;
+}
+
+<div class="cart_wrapper">
+    @if (Model.ListSanPhamGioHang == null || !Model.ListSanPhamGioHang.Any())
+    {
+        <div class="cart_item">
+            <div class="cart_item_empty">
+                <img src="/images/empty_cart.png" alt="">
+                <p>Giỏ hàng của bạn hiện đang trống</p>
+                <a class="button" asp-controller="SanPham" asp-action="Index">
+                    Tiếp tục mua sắm
+                </a>
+            </div>
+        </div>
+        }
+        else
+        {
+            foreach(var sanpham in Model.ListSanPhamGioHang) {
+                <div class="cart_item">
+                    <div class="cart_item_row">
+                        <div class="cart_item_row_left">
+                            <img src="@(string.IsNullOrWhiteSpace(sanpham.UrlAnh) ? "/images/no_img.png" : sanpham.UrlAnh)" alt="Ảnh sản phẩm">
+                            <h3 class="cart_item_heading">@sanpham.TenSP</h3>
+                        </div>
+                        <div class="cart_item_row_price">@sanpham.GiaBanSP.ToString("N0", new CultureInfo("vi-VN"))</div>
+                    </div>
+                    <div class="cart_item_row align_right">
+                        <form asp-controller="GioHang" asp-action="XoaSanPhamTrongGio" method="post" onsubmit="return confirm('Bạn có chắc chắn muốn xóa sản phẩm này không?')">
+                            <input type="hidden" name="maSP" value="@sanpham.MaSP" />
+                            <button type="submit" class="cart_item_button_no_style delete">
+                                <span class="material-symbols-outlined">delete</span>
+                                Xóa
+                            </button>
+                        </form>
+                        <form asp-controller="GioHang" asp-action="SuaSoLuongSanPhamTrongGio" method="post" class="cart_item_form_quantity">
+                            <button type="button" class="cart_item_button_no_style left button_subtract_quantity">
+                                <span class="material-symbols-outlined">remove</span>
+                            </button>
+                            <input type="hidden" name="MaSP" value="@sanpham.MaSP" />
+                            <input type="text" value="@sanpham.SoLuongSP" name="SoLuongSP" class="cart_item_input_quantity" inputmode="numeric" pattern="[0-9]*">
+                            <button type="button" class="cart_item_button_no_style right button_add_quantity">
+                                <span class="material-symbols-outlined">add</span>
+                            </button>
+                        </form>
+                    </div>
+                    <div class="cart_item_row align_right item_price">
+                        <p>Thành tiền (@sanpham.SoLuongSP sản phẩm):</p>
+                        <p>@sanpham.ThanhTien.ToString("N0", new CultureInfo("vi-VN"))</p>
+                    </div>
+                </div>
+            }
+
+            <div class="cart_item">
+                <h3 class="cart_item_heading">Thông tin sản phẩm nhận</h3>
+                @foreach(var sanpham in Model.ListSanPhamGioHang) {
+                    <div class="cart_item_row border_bottom">
+                        <div class="cart_item_row_left">
+                            <img src="@(string.IsNullOrWhiteSpace(sanpham.UrlAnh) ? "/uploads/images/products/may-lanh-daikin-inverter-1.5hp1.jpg" : sanpham.UrlAnh)" alt="Ảnh sản phẩm">
+                            <div>
+                                <h3 class="cart_item_heading">@sanpham.TenSP</h3>
+                                <p>(@sanpham.SoLuongSP sản phẩm)</p>
+                            </div>
+                        </div>
+                        <div class="cart_item_row_price">@sanpham.ThanhTien.ToString("N0", new CultureInfo("vi-VN"))</div>
+                    </div>
+                }
+                <div class="cart_item_row align_right item_price" style="border: none; padding: 0;">
+                    <p>Phí giao hàng:</p>
+                    <p>@(Model.PhiVanChuyen > 0 ? Model.PhiVanChuyen.ToString("N0", new CultureInfo("vi-VN")) : "Miễn phí")</p>
+                </div>
+                <div class="cart_item_row align_right item_price" style="border: none; padding: 0;">
+                    <p>Tổng tiền:</p>
+                    <p>@Model.TongTien.ToString("N0", new CultureInfo("vi-VN"))</p>
+                </div>
+            </div>
+
+            @if (User.Identity?.IsAuthenticated ?? false) {
+                <div class="cart_item">
+                    <h3 class="cart_item_heading">Địa chỉ nhận hàng</h3>
+                    <div class="delivery_address">
+                        @if (Model?.ListDiaChiNhanHang?.Count > 0)
+                        {
+                            foreach (var dcnh in Model.ListDiaChiNhanHang)
+                            {
+                                <div class="delivery_address_item">
+                                    <div class="delivery_address_item_left">
+                                        <label>
+                                            <input type="radio" name="MaDCCT" value="@dcnh.DiaChiCuThe.MaDCCT" @(dcnh.DiaChiCuThe.MacDinhDCCT == 1 ? "checked" : "")>
+                                            <p>@dcnh.DiaChiString</p>
+                                            <span>@(dcnh.DiaChiCuThe.MacDinhDCCT == 1 ? "(Mặc định)" : "")</span>
+                                        </label>
+                                    </div>
+                                    <div class="delivery_address_item_right">
+                                        @if (dcnh.DiaChiCuThe.MacDinhDCCT == 0) {
+                                            <form method="post" asp-controller="TaiKhoan" asp-action="DatDiaChiMacDinh" onsubmit="return confirm('Bạn có chắc muốn đặt địa chỉ này làm mặc định không?');">
+                                                <input type="hidden" name="MaDCCT" value="@(dcnh?.DiaChiCuThe.MaDCCT ?? 0)" />
+                                                <input type="hidden" name="returnurl" value="/GioHang/Index" />
+                                                <button class="delivery_address_item_right_set_default">
+                                                    <span class="material-symbols-outlined">keep</span>
+                                                    Đặt làm mặc định
+                                                </button>
+                                            </form>
+                                        }
+                                        @if (dcnh.DuocSuaXoa == 1) {
+                                            <a asp-action="DiaChiNhanHang" asp-controller="TaiKhoan" asp-route-madc="@dcnh.DiaChiCuThe.MaDCCT" asp-route-returnurl="/GioHang/Index" class="delivery_address_item_right_edit">
+                                                <span class="material-symbols-outlined">edit</span>
+                                                Sửa
+                                            </a>
+                                        }
+                                    </div>
+                                </div>
+                            }
+                        }
+                        <a asp-action="DiaChiNhanHang" asp-controller="TaiKhoan" asp-route-returnurl="/GioHang/Index" class="button delivery_address_button_add">Thêm địa chỉ</a>
+                    </div>
+                </div>
+            }
+
+            <div class="cart_item">
+                <h3 class="cart_item_heading">Phương thức thanh toán</h3>
+                <label class="radio_payment_method">
+                    <input type="radio" checked>
+                    Thanh toán khi nhận hàng
+                </label>
+            </div>
+            <form method="post" asp-action="DatHang">
+                <input type="hidden" id="maDCCTHidden" name="MaDCCT" value="" />
+                <button type="submit" class="button cart_item_button_order">Đặt hàng</button>
+            </form>
+        }
+</div>
+
+@section Scripts {
+    <script src="~/js/giohang.js" asp-append-version="true"></script>
+}
+
+@if (!string.IsNullOrEmpty(message))
+{
+    <script>
+        alert('@Html.Raw(message)');
+    </script>
+}

@@ -2,9 +2,9 @@
 {
     public class LoaiSanPham
     {
-        public int? MaLSP { get; set; }
-        public string? TenLSP { get; set; }
-        public decimal? ThueGTGTLSP { get; set; }
-        public int? TrangThaiLSP { get; set; }
+        public int MaLSP { get; set; }
+        public string TenLSP { get; set; } = string.Empty;
+        public decimal ThueGTGTLSP { get; set; }
+        public int TrangThaiLSP { get; set; }
     }
 }

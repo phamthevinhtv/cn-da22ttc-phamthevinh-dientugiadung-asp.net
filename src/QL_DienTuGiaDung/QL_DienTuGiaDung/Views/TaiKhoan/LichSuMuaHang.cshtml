@@ -1,0 +1,72 @@
+@using System.Globalization
+@model List<DonHang>
+
+@{
+    var message = TempData["Message"] as string;
+}
+
+@section Styles {
+    <link rel="stylesheet" href="~/css/taikhoan.css" asp-append-version="true"/>
+}
+
+<div class="account_info">
+    @if (Model.Count > 0) {
+        foreach(var order in Model) {
+            <div class="account_form">
+                <div class="history_header">
+                    <div>
+                        <b>Đơn hàng VE@(order.MaDH)</b>
+                        <span>Đặt lúc @order.NgayTaoDH.ToString("HH:mm - dd/MM/yyyy")</span>
+                    </div>
+                    <p>@order.TrangThaiDonHang.TenTTDH (@order.NgayCapNhatDH.ToString("HH:mm - dd/MM/yyyy"))</p>
+                </div> 
+                @foreach (var product in order.ListSanPhamDatHang) {
+                    <div class="history_body">
+                        <div>
+                            <img src="@(string.IsNullOrWhiteSpace(product.UrlAnh) ? "/images/no_img.png" : product.UrlAnh)" alt="Ảnh sản phẩm">
+                            <div>
+                                <b>@product.TenSP</b>
+                                <p>(@product.SoLuongDat sản phẩm)</p>
+                            </div>
+                        </div>
+                        <b>@product.GiaDatSauGiamVaThue.ToString("N0", new CultureInfo("vi-VN"))</b>
+                    </div> 
+                }
+                <div class="history_body_bottom">
+                    <p>Địa chỉ nhận hàng: @order.DiaChiNhanHang.DiaChiCuThe.TenDCCT, @order.DiaChiNhanHang.XaPhuong.TenXP, @order.DiaChiNhanHang.TinhThanhPho.TenTTP</p>
+                    <p>Phương thức thành toán: @order.PhuongThucThanhToan.TenPTTT</p>
+                </div>
+                <div class="history_footer">
+                    <div>
+                        <p>Phí giao hàng:</p>
+                        <b>@(order.PhiVanChuyenDH > 0 ? order.PhiVanChuyenDH.ToString("N0", new CultureInfo("vi-VN")) : "Miễn phí")</b>
+                    </div>
+                    <div>
+                        <p>Tổng tiền:</p>
+                        <b>@order.TongTienDH.ToString("N0", new CultureInfo("vi-VN"))</b>
+                    </div>
+                    <div style="color: var(--color-primary);">
+                        @order.TrangThaiThanhToan.TenTTTT (@order.NgayCapNhatTT.ToString("HH:mm - dd/MM/yyyy"))
+                    </div>
+                    @if(order.MaTTDH == 1) {
+                        <div>
+                            <form action="HuyDonHang" method="post" onsubmit="return confirm(`Bạn có chắc chắn muốn hủy đơn hàng VE@(order.MaDH) không`)">
+                                <input type="hidden" name="maDH" value="@order.MaDH">
+                                <button class="button" style="background-color: var(--color-danger); border-color: var(--color-danger);">Hủy</button>
+                            </form>
+                        </div>
+                    }
+                </div> 
+            </div>
+        }
+    } else {
+        <p>Hiện không có đơn hàng nào</p>
+    }
+</div>
+
+@if (!string.IsNullOrEmpty(message))
+{
+    <script>
+        alert('@Html.Raw(message)');
+    </script>
+}

@@ -1,8 +1,11 @@
-using QL_DienTuGiaDung.BLL;
-using QL_DienTuGiaDung.DAL;
 using QL_DienTuGiaDung.Helpers;
+using QL_DienTuGiaDung.DAL;
+using QL_DienTuGiaDung.BLL;
+using Microsoft.AspNetCore.Authentication.Cookies;
 
 var builder = WebApplication.CreateBuilder(args);
+
+builder.Services.AddHttpClient();
 
 builder.Services.AddDistributedMemoryCache();
 
@@ -13,61 +16,56 @@ builder.Services.AddSession(options =>
     options.Cookie.IsEssential = true;          
 });
 
-builder.Services.AddAuthentication("VElectricCookie")
+builder.Services
+    .AddAuthentication("VElectricCookie")
     .AddCookie("VElectricCookie", options =>
     {
-        options.LoginPath = "/Account/Index";
-        options.AccessDeniedPath = "/Account/Denied";
-        options.ExpireTimeSpan = TimeSpan.FromHours(1);
-        options.SlidingExpiration = true;
+        options.LoginPath = "/TaiKhoan/Index";
+        options.AccessDeniedPath = "/SanPham/Index";
 
-        options.Cookie.Name = "VElectricAuth";
-        options.Cookie.HttpOnly = true;
-
-        options.Events.OnRedirectToLogin = context =>
+        options.Events = new CookieAuthenticationEvents
         {
-            if (context.Request.Path.StartsWithSegments("/Admin"))
-                context.Response.Redirect("/Admin/Login");
-            else
-                context.Response.Redirect("/Account/Index");
-
-            return Task.CompletedTask;
+            OnRedirectToAccessDenied = context =>
+            {
+                context.Response.Redirect("/SanPham/Index");
+                return Task.CompletedTask;
+            }
         };
     });
 
+
 builder.Services.AddAuthorization();
 
-// Add services to the container.
 builder.Services.AddControllersWithViews();
-
-builder.Services.AddScoped<AccountBLL>();
-builder.Services.AddScoped<ProductBLL>();
-builder.Services.AddScoped<PaymentMethodBLL>();
-builder.Services.AddScoped<OrderBLL>();
-builder.Services.AddScoped<DeliveryAddressBLL>();
-builder.Services.AddScoped<ThuongHieuBLL>();
-builder.Services.AddScoped<QuocGiaBLL>();
-builder.Services.AddScoped<ThongKeBLL>();
-
-builder.Services.AddScoped<AccountDAL>();
-builder.Services.AddScoped<ProductDAL>();
-builder.Services.AddScoped<PaymentMethodDAL>();
-builder.Services.AddScoped<OrderDAL>();
-builder.Services.AddScoped<DeliveryAddressDAL>();
-builder.Services.AddScoped<ThuongHieuDAL>();
-builder.Services.AddScoped<QuocGiaDAL>();
-builder.Services.AddScoped<ThongKeDAL>();
 
 builder.Services.AddScoped<DatabaseHelper>();
 
-builder.Services.AddHttpClient();
+builder.Services.AddScoped<LoaiSanPhamDAL>();
+builder.Services.AddScoped<SanPhamDAL>();
+builder.Services.AddScoped<TaiKhoanDAL>();
+builder.Services.AddScoped<DiaChiDAL>();
+builder.Services.AddScoped<AnhDAL>();
+builder.Services.AddScoped<DanhGiaDAL>();
+builder.Services.AddScoped<DonHangDAL>();
+builder.Services.AddScoped<ThongKeDAL>();
+builder.Services.AddScoped<QuocGiaDAL>();
+builder.Services.AddScoped<ThuongHieuDAL>();
+
+builder.Services.AddScoped<LoaiSanPhamBLL>();
+builder.Services.AddScoped<SanPhamBLL>();
+builder.Services.AddScoped<TaiKhoanBLL>();
+builder.Services.AddScoped<DiaChiBLL>();
+builder.Services.AddScoped<AnhBLL>();
+builder.Services.AddScoped<DanhGiaBLL>();
+builder.Services.AddScoped<DonHangBLL>();
+builder.Services.AddScoped<ThongKeBLL>();
+builder.Services.AddScoped<QuocGiaBLL>();
+builder.Services.AddScoped<ThuongHieuBLL>();
 
 var app = builder.Build();
 
-// Configure the HTTP request pipeline.
 if (!app.Environment.IsDevelopment())
 {
-    app.UseExceptionHandler("/Home/Error");
     app.UseHsts();
 }
 
@@ -75,13 +73,12 @@ app.UseHttpsRedirection();
 app.UseStaticFiles();
 
 app.UseRouting();
-
-app.UseSession();
-
+app.UseSession();          
+app.UseAuthentication(); 
 app.UseAuthorization();
 
 app.MapControllerRoute(
     name: "default",
-    pattern: "{controller=Product}/{action=Index}/{id?}");
+    pattern: "{controller=SanPham}/{action=Index}/{id?}");
 
 app.Run();

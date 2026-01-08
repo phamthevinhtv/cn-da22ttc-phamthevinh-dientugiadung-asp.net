@@ -1,0 +1,39 @@
+@model TaiKhoan
+
+@{
+    var message = TempData["Message"] as string;
+}
+
+@section Styles {
+    <link rel="stylesheet" href="~/css/taikhoan.css" asp-append-version="true"/>
+}
+
+<div class="account_wrapper">
+    <div class="account_form">
+        <h3 class="account_form_heading">Đăng nhập trang quản trị</h3>
+        <form method="post" asp-action="DangNhap">
+            <div class="account_form_group">
+                <label asp-for="TenTK">Tên đăng nhập:</label>
+                <input class="input" asp-for="TenTK" type="text" placeholder="Nhập tên đăng nhập">
+                <span asp-validation-for="TenTK" class="account_form_group_message"></span>
+            </div>
+            <div class="account_form_group">
+                <label asp-for="MatKhauTK">Mật khẩu:</label>
+                <input class="input" asp-for="MatKhauTK" type="password" placeholder="Nhập mật khẩu">
+                <span asp-validation-for="MatKhauTK" class="account_form_group_message"></span>
+            </div>
+            <button type="submit" class="button">Đăng nhập</button>
+        </form>
+    </div>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}
+
+@if (!string.IsNullOrEmpty(message))
+{
+    <script>
+        alert('@Html.Raw(message)');
+    </script>
+}

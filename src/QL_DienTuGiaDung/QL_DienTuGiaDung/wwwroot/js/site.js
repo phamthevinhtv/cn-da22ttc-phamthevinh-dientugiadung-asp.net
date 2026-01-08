@@ -1,147 +1,147 @@
 ﻿function updateLayout() {
-    const header = document.querySelector('#header');
-    const content = document.querySelector('#content');
-    const main = document.querySelector('#main');
-    const sidebar = document.querySelector('#sidebar');
-    const footer = document.querySelector('#footer');
+    const headerHeight = document.querySelector(".header").getBoundingClientRect().height;
+    const sidebarWidth = document.querySelector(".main_content_sidebar").getBoundingClientRect().width;
+    const mainContentLeft= document.querySelector(".main_content").getBoundingClientRect().left;
+    const footerTop = document.querySelector(".footer").getBoundingClientRect().top;
 
-    let headerBottom = 0;
-
-    if (header) {
-        headerBottom = header.getBoundingClientRect().bottom;
-        document.documentElement.style.setProperty('--sidebar-top', headerBottom + 'px');
-    }
-
-    if (content) {
-        const contentLeft= content.getBoundingClientRect().left;
-        document.documentElement.style.setProperty('--sidebar-left', contentLeft + 'px');
-    }
-
-    if (main && footer) {
-        const footerHeight = footer.getBoundingClientRect().height;
-        const mainMinHeight = window.innerHeight - footerHeight - headerBottom - 24;
-        document.documentElement.style.setProperty('--main-min-height', mainMinHeight + 'px');
-        
-    }
-
-    if (sidebar) {
-        const sidebarWidth = sidebar.getBoundingClientRect().width;
-        document.documentElement.style.setProperty('--main-margin-left', (sidebarWidth + 12) + 'px');
-    }
-
-    if (footer) {
-        const footerTop = footer.getBoundingClientRect().top;
-        const sidebarHeight = (footerTop) < window.innerHeight ? (footerTop - headerBottom) : (window.innerHeight - headerBottom);
-
-        document.documentElement.style.setProperty('--sidebar-height', sidebarHeight + 'px');
+    $(".main").css("margin-top", headerHeight + "px");
+    $(".main_content_container").css("margin-left", sidebarWidth + "px");
+    $(".main_content_sidebar").css("top", headerHeight + "px");
+    $(".main_content_sidebar").css("left", mainContentLeft + "px");
+    
+    if (window.innerHeight > footerTop) {
+        $(".main_content_sidebar").css("height", (footerTop - headerHeight) + "px");
+    } else {
+        $(".main_content_sidebar").css("height", (window.innerHeight - headerHeight) + "px");
     }
 }
 
 function toggleSidebar() {
-    const sidebar = document.querySelector('#sidebar');
-    const buttonToggle = document.querySelector('#button-toggle-sidebar');
+    $(".header_content_bottom_icon_hamburger").click(function (e) {
+        e.stopPropagation(); 
+        $(".main_content_sidebar").toggleClass("active");
+    });
 
-    if(sidebar && buttonToggle) {
-        buttonToggle.addEventListener('click', function(e) {
-            e.stopPropagation();
-            sidebar.classList.toggle('active');
-        });
+    $(".main_content_sidebar").click(function (e) {
+        e.stopPropagation();
+    });
 
-        sidebar.addEventListener('click', function (e) {
-            e.stopPropagation();
-        });
+    $(document).click(function () {
+        $(".main_content_sidebar").removeClass("active");
+    });
+}
 
-        document.addEventListener('click', function () {
-            sidebar.classList.remove('active');
-        });
+function toggleHamburgerBySidebar() {
+    const hasSidebar = document.querySelector(".main_content_sidebar_nav");
+    const hamburger = document.querySelector(".header_content_bottom_icon_hamburger");
+
+    if (!hasSidebar && hamburger) {
+        hamburger.style.setProperty("display", "none", "important");
     }
+}
+
+function loadProvinces(selectElement, selectedValue = null) {
+    fetch('/api/provinces')
+        .then(response => response.json())
+        .then(data => {
+            const select = document.querySelector(selectElement);
+            select.innerHTML = '<option value="">-- Chọn Tỉnh/Thành phố --</option>';
+            
+            if (data.provinces) {
+                data.provinces.forEach(province => {
+                    const option = document.createElement('option');
+                    option.value = `${province.code}|${province.name}`;
+                    option.textContent = province.name;
+                    select.appendChild(option);
+                });
+            }
+
+            if (selectedValue) {
+                select.value = selectedValue;
+                select.dispatchEvent(new Event('change'));
+            }
+        })
+        .catch(error => {
+            console.error('Lỗi khi load tỉnh thành:', error);
+        });
+}
+
+function loadCommunes(provinceCode, selectElement, selectedValue = null) {
+    if (!provinceCode) {
+        const select = document.querySelector(selectElement);
+        select.innerHTML = '<option value="">-- Chọn Xã/Phường --</option>';
+        return;
+    }
+
+    fetch(`/api/provinces/${provinceCode}/communes`)
+        .then(response => response.json())
+        .then(data => {
+            const select = document.querySelector(selectElement);
+            select.innerHTML = '<option value="">-- Chọn Xã/Phường --</option>';
+            
+            if (data.communes) {
+                data.communes.forEach(commune => {
+                    const option = document.createElement('option');
+                    option.value = `${commune.code}|${commune.name}`;
+                    option.textContent = commune.name;
+                    select.appendChild(option);
+                });
+            }
+
+            if (selectedValue) {
+                select.value = selectedValue;
+            }
+        })
+        .catch(error => {
+            console.error('Lỗi khi load xã phường:', error);
+        });
+}
+
+function initAddressForm(provinceSelectId, communeSelectId) {
+    const provinceSelect = document.querySelector(`#${provinceSelectId}`);
+    const communeSelect = document.querySelector(`#${communeSelectId}`);
+
+    const oldTinh = document.getElementById('oldTinhTP')?.value;
+    const oldXa = document.getElementById('oldXaPhuong')?.value;
+
+    if (!provinceSelect || !communeSelect) {
+        console.error('Không tìm thấy select element');
+        return;
+    }
+
+    loadProvinces(`#${provinceSelectId}`, oldTinh);
+
+    provinceSelect.addEventListener('change', function () {
+        const selectedValue = this.value;
+        if (selectedValue) {
+            const provinceCode = selectedValue.split('|')[0];
+            loadCommunes(provinceCode, `#${communeSelectId}`, oldXa);
+        } else {
+            communeSelect.innerHTML = '<option value="">-- Chọn Xã/Phường --</option>';
+        }
+    });
 }
 
 document.addEventListener('DOMContentLoaded', function() {
     updateLayout();
-
-    setTimeout(() => {
+    setTimeout(function() {
         updateLayout();
     }, 500);
-    
-    window.addEventListener('resize', function() {
-        updateLayout();
-
-        setTimeout(() => {
-            updateLayout();
-        }, 500);
-    });
-    
-    window.addEventListener('scroll', function() {
-        updateLayout();
-
-        setTimeout(() => {
-            updateLayout();
-        }, 500);
-    });
 
     toggleSidebar();
+    toggleHamburgerBySidebar();
+});
 
-    const provinceSelect = document.getElementById('provinceSelect');
-    const communeSelect = document.getElementById('communeSelect');
+window.addEventListener('resize', function() {
+    updateLayout();
+    setTimeout(function() {
+        updateLayout();
+    }, 500);
+});
 
-    const apiBase = '/api';
-
-    async function loadProvinces() {
-        try {
-            const res = await fetch(`${apiBase}/provinces`);
-            if (!res.ok) throw new Error('Không thể tải danh sách tỉnh/thành phố');
-
-            const data = await res.json();
-
-            const provinces = data.provinces;
-
-            provinceSelect.innerHTML = '<option value="">-- Chọn Tỉnh/Thành phố --</option>';
-
-            provinces.forEach(p => {
-                const option = document.createElement('option');
-                option.value = `${p.code}|${p.name}`;   
-                option.textContent = p.name;         
-                provinceSelect.appendChild(option);
-            });
-        } catch (err) {
-            console.error(err);
-        }
-    }
-
-    async function loadCommunes(provinceCode) {
-        try {
-            const res = await fetch(
-                `${apiBase}/provinces/${provinceCode}/communes`
-            );
-            if (!res.ok) throw new Error('Không thể tải danh sách xã/phường');
-
-            const data = await res.json();
-
-            const communes = data.communes;
-
-            communeSelect.innerHTML = '<option value="">-- Chọn Xã/Phường --</option>';
-
-            communes.forEach(c => {
-                const option = document.createElement('option');
-                option.value = `${c.code}|${c.name}`;
-                option.textContent = c.name;
-                communeSelect.appendChild(option);
-            });
-        } catch (err) {
-            console.error(err);
-        }
-    }
-
-    provinceSelect.addEventListener('change', () => {
-        const value = provinceSelect.value;
-        communeSelect.innerHTML = '<option value="">-- Chọn Xã/Phường --</option>';
-
-        if (!value) return;
-
-        const [provinceCode] = value.split('|');
-        loadCommunes(provinceCode);
-    });
-
-    loadProvinces();
+window.addEventListener('scroll', function() {
+    updateLayout();
+    setTimeout(function() {
+        updateLayout();
+    }, 500);
 });

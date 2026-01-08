@@ -9,197 +9,229 @@ build_property.EnforceExtendedAnalyzerRules =
 build_property._SupportedPlatformList = Linux,macOS,Windows
 build_property.RootNamespace = QL_DienTuGiaDung
 build_property.RootNamespace = QL_DienTuGiaDung
-build_property.ProjectDir = C:\cn-da22ttc-phamthevinh-dientugiadung-asp.net\src\QL_DienTuGiaDung\QL_DienTuGiaDung\
+build_property.ProjectDir = C:\HocPhan\Project\New\QL_DienTuGiaDung\QL_DienTuGiaDung\
 build_property.EnableComHosting = 
 build_property.EnableGeneratedComInterfaceComImportInterop = 
 build_property.RazorLangVersion = 8.0
 build_property.SupportLocalizedComponentNames = 
 build_property.GenerateRazorMetadataSourceChecksumAttributes = 
-build_property.MSBuildProjectDirectory = C:\cn-da22ttc-phamthevinh-dientugiadung-asp.net\src\QL_DienTuGiaDung\QL_DienTuGiaDung
+build_property.MSBuildProjectDirectory = C:\HocPhan\Project\New\QL_DienTuGiaDung\QL_DienTuGiaDung
 build_property._RazorSourceGeneratorDebug = 
 build_property.EffectiveAnalysisLevelStyle = 8.0
 build_property.EnableCodeStyleSeverity = 
 
-[C:/cn-da22ttc-phamthevinh-dientugiadung-asp.net/src/QL_DienTuGiaDung/QL_DienTuGiaDung/Views/Account/History.cshtml]
-build_metadata.AdditionalFiles.TargetPath = Vmlld3NcQWNjb3VudFxIaXN0b3J5LmNzaHRtbA==
+[C:/HocPhan/Project/New/QL_DienTuGiaDung/QL_DienTuGiaDung/Views/Admin/ChiTietLoaiSanPham.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcQWRtaW5cQ2hpVGlldExvYWlTYW5QaGFtLmNzaHRtbA==
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/cn-da22ttc-phamthevinh-dientugiadung-asp.net/src/QL_DienTuGiaDung/QL_DienTuGiaDung/Views/Account/Index.cshtml]
-build_metadata.AdditionalFiles.TargetPath = Vmlld3NcQWNjb3VudFxJbmRleC5jc2h0bWw=
+[C:/HocPhan/Project/New/QL_DienTuGiaDung/QL_DienTuGiaDung/Views/Admin/ChiTietQuocGia.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcQWRtaW5cQ2hpVGlldFF1b2NHaWEuY3NodG1s
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/cn-da22ttc-phamthevinh-dientugiadung-asp.net/src/QL_DienTuGiaDung/QL_DienTuGiaDung/Views/Account/Personal.cshtml]
-build_metadata.AdditionalFiles.TargetPath = Vmlld3NcQWNjb3VudFxQZXJzb25hbC5jc2h0bWw=
+[C:/HocPhan/Project/New/QL_DienTuGiaDung/QL_DienTuGiaDung/Views/Admin/ChiTietSanPham.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcQWRtaW5cQ2hpVGlldFNhblBoYW0uY3NodG1s
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/cn-da22ttc-phamthevinh-dientugiadung-asp.net/src/QL_DienTuGiaDung/QL_DienTuGiaDung/Views/Account/Register.cshtml]
-build_metadata.AdditionalFiles.TargetPath = Vmlld3NcQWNjb3VudFxSZWdpc3Rlci5jc2h0bWw=
+[C:/HocPhan/Project/New/QL_DienTuGiaDung/QL_DienTuGiaDung/Views/Admin/ChiTietThuongHieu.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcQWRtaW5cQ2hpVGlldFRodW9uZ0hpZXUuY3NodG1s
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/cn-da22ttc-phamthevinh-dientugiadung-asp.net/src/QL_DienTuGiaDung/QL_DienTuGiaDung/Views/Account/VerifyOTP.cshtml]
-build_metadata.AdditionalFiles.TargetPath = Vmlld3NcQWNjb3VudFxWZXJpZnlPVFAuY3NodG1s
+[C:/HocPhan/Project/New/QL_DienTuGiaDung/QL_DienTuGiaDung/Views/Admin/DangNhap.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcQWRtaW5cRGFuZ05oYXAuY3NodG1s
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/cn-da22ttc-phamthevinh-dientugiadung-asp.net/src/QL_DienTuGiaDung/QL_DienTuGiaDung/Views/Admin/Brand.cshtml]
-build_metadata.AdditionalFiles.TargetPath = Vmlld3NcQWRtaW5cQnJhbmQuY3NodG1s
+[C:/HocPhan/Project/New/QL_DienTuGiaDung/QL_DienTuGiaDung/Views/Admin/DonHang.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcQWRtaW5cRG9uSGFuZy5jc2h0bWw=
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/cn-da22ttc-phamthevinh-dientugiadung-asp.net/src/QL_DienTuGiaDung/QL_DienTuGiaDung/Views/Admin/BrandDetail.cshtml]
-build_metadata.AdditionalFiles.TargetPath = Vmlld3NcQWRtaW5cQnJhbmREZXRhaWwuY3NodG1s
-build_metadata.AdditionalFiles.CssScope = 
-
-[C:/cn-da22ttc-phamthevinh-dientugiadung-asp.net/src/QL_DienTuGiaDung/QL_DienTuGiaDung/Views/Admin/Country.cshtml]
-build_metadata.AdditionalFiles.TargetPath = Vmlld3NcQWRtaW5cQ291bnRyeS5jc2h0bWw=
-build_metadata.AdditionalFiles.CssScope = 
-
-[C:/cn-da22ttc-phamthevinh-dientugiadung-asp.net/src/QL_DienTuGiaDung/QL_DienTuGiaDung/Views/Admin/CountryDetail.cshtml]
-build_metadata.AdditionalFiles.TargetPath = Vmlld3NcQWRtaW5cQ291bnRyeURldGFpbC5jc2h0bWw=
-build_metadata.AdditionalFiles.CssScope = 
-
-[C:/cn-da22ttc-phamthevinh-dientugiadung-asp.net/src/QL_DienTuGiaDung/QL_DienTuGiaDung/Views/Admin/Index.cshtml]
+[C:/HocPhan/Project/New/QL_DienTuGiaDung/QL_DienTuGiaDung/Views/Admin/Index.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcQWRtaW5cSW5kZXguY3NodG1s
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/cn-da22ttc-phamthevinh-dientugiadung-asp.net/src/QL_DienTuGiaDung/QL_DienTuGiaDung/Views/Admin/Login.cshtml]
-build_metadata.AdditionalFiles.TargetPath = Vmlld3NcQWRtaW5cTG9naW4uY3NodG1s
+[C:/HocPhan/Project/New/QL_DienTuGiaDung/QL_DienTuGiaDung/Views/Admin/LoaiSanPham.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcQWRtaW5cTG9haVNhblBoYW0uY3NodG1s
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/cn-da22ttc-phamthevinh-dientugiadung-asp.net/src/QL_DienTuGiaDung/QL_DienTuGiaDung/Views/Admin/Order.cshtml]
-build_metadata.AdditionalFiles.TargetPath = Vmlld3NcQWRtaW5cT3JkZXIuY3NodG1s
-build_metadata.AdditionalFiles.CssScope = 
-
-[C:/cn-da22ttc-phamthevinh-dientugiadung-asp.net/src/QL_DienTuGiaDung/QL_DienTuGiaDung/Views/Admin/Partials/_DetailMayLanh.cshtml]
+[C:/HocPhan/Project/New/QL_DienTuGiaDung/QL_DienTuGiaDung/Views/Admin/Partials/_DetailMayLanh.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcQWRtaW5cUGFydGlhbHNcX0RldGFpbE1heUxhbmguY3NodG1s
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/cn-da22ttc-phamthevinh-dientugiadung-asp.net/src/QL_DienTuGiaDung/QL_DienTuGiaDung/Views/Admin/Partials/_DetailMayLocKhongKhi.cshtml]
+[C:/HocPhan/Project/New/QL_DienTuGiaDung/QL_DienTuGiaDung/Views/Admin/Partials/_DetailMayLocKhongKhi.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcQWRtaW5cUGFydGlhbHNcX0RldGFpbE1heUxvY0tob25nS2hpLmNzaHRtbA==
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/cn-da22ttc-phamthevinh-dientugiadung-asp.net/src/QL_DienTuGiaDung/QL_DienTuGiaDung/Views/Admin/Partials/_DetailMayLocNuoc.cshtml]
+[C:/HocPhan/Project/New/QL_DienTuGiaDung/QL_DienTuGiaDung/Views/Admin/Partials/_DetailMayLocNuoc.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcQWRtaW5cUGFydGlhbHNcX0RldGFpbE1heUxvY051b2MuY3NodG1s
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/cn-da22ttc-phamthevinh-dientugiadung-asp.net/src/QL_DienTuGiaDung/QL_DienTuGiaDung/Views/Admin/Partials/_DetailMayRuaChen.cshtml]
+[C:/HocPhan/Project/New/QL_DienTuGiaDung/QL_DienTuGiaDung/Views/Admin/Partials/_DetailMayRuaChen.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcQWRtaW5cUGFydGlhbHNcX0RldGFpbE1heVJ1YUNoZW4uY3NodG1s
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/cn-da22ttc-phamthevinh-dientugiadung-asp.net/src/QL_DienTuGiaDung/QL_DienTuGiaDung/Views/Admin/Partials/_DetailNoiChien.cshtml]
+[C:/HocPhan/Project/New/QL_DienTuGiaDung/QL_DienTuGiaDung/Views/Admin/Partials/_DetailNoiChien.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcQWRtaW5cUGFydGlhbHNcX0RldGFpbE5vaUNoaWVuLmNzaHRtbA==
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/cn-da22ttc-phamthevinh-dientugiadung-asp.net/src/QL_DienTuGiaDung/QL_DienTuGiaDung/Views/Admin/Partials/_DetailNoiComDien.cshtml]
+[C:/HocPhan/Project/New/QL_DienTuGiaDung/QL_DienTuGiaDung/Views/Admin/Partials/_DetailNoiComDien.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcQWRtaW5cUGFydGlhbHNcX0RldGFpbE5vaUNvbURpZW4uY3NodG1s
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/cn-da22ttc-phamthevinh-dientugiadung-asp.net/src/QL_DienTuGiaDung/QL_DienTuGiaDung/Views/Admin/Partials/_DetailTiVi.cshtml]
+[C:/HocPhan/Project/New/QL_DienTuGiaDung/QL_DienTuGiaDung/Views/Admin/Partials/_DetailTiVi.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcQWRtaW5cUGFydGlhbHNcX0RldGFpbFRpVmkuY3NodG1s
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/cn-da22ttc-phamthevinh-dientugiadung-asp.net/src/QL_DienTuGiaDung/QL_DienTuGiaDung/Views/Admin/Partials/_DetailTuLanh.cshtml]
+[C:/HocPhan/Project/New/QL_DienTuGiaDung/QL_DienTuGiaDung/Views/Admin/Partials/_DetailTuLanh.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcQWRtaW5cUGFydGlhbHNcX0RldGFpbFR1TGFuaC5jc2h0bWw=
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/cn-da22ttc-phamthevinh-dientugiadung-asp.net/src/QL_DienTuGiaDung/QL_DienTuGiaDung/Views/Admin/Personal.cshtml]
-build_metadata.AdditionalFiles.TargetPath = Vmlld3NcQWRtaW5cUGVyc29uYWwuY3NodG1s
+[C:/HocPhan/Project/New/QL_DienTuGiaDung/QL_DienTuGiaDung/Views/Admin/Partials/_MayLanh.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcQWRtaW5cUGFydGlhbHNcX01heUxhbmguY3NodG1s
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/cn-da22ttc-phamthevinh-dientugiadung-asp.net/src/QL_DienTuGiaDung/QL_DienTuGiaDung/Views/Admin/Product.cshtml]
-build_metadata.AdditionalFiles.TargetPath = Vmlld3NcQWRtaW5cUHJvZHVjdC5jc2h0bWw=
+[C:/HocPhan/Project/New/QL_DienTuGiaDung/QL_DienTuGiaDung/Views/Admin/Partials/_MayLocKhongKhi.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcQWRtaW5cUGFydGlhbHNcX01heUxvY0tob25nS2hpLmNzaHRtbA==
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/cn-da22ttc-phamthevinh-dientugiadung-asp.net/src/QL_DienTuGiaDung/QL_DienTuGiaDung/Views/Admin/ProductDetail.cshtml]
-build_metadata.AdditionalFiles.TargetPath = Vmlld3NcQWRtaW5cUHJvZHVjdERldGFpbC5jc2h0bWw=
+[C:/HocPhan/Project/New/QL_DienTuGiaDung/QL_DienTuGiaDung/Views/Admin/Partials/_MayLocNuoc.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcQWRtaW5cUGFydGlhbHNcX01heUxvY051b2MuY3NodG1s
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/cn-da22ttc-phamthevinh-dientugiadung-asp.net/src/QL_DienTuGiaDung/QL_DienTuGiaDung/Views/Cart/Index.cshtml]
-build_metadata.AdditionalFiles.TargetPath = Vmlld3NcQ2FydFxJbmRleC5jc2h0bWw=
+[C:/HocPhan/Project/New/QL_DienTuGiaDung/QL_DienTuGiaDung/Views/Admin/Partials/_MayRuaChen.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcQWRtaW5cUGFydGlhbHNcX01heVJ1YUNoZW4uY3NodG1s
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/cn-da22ttc-phamthevinh-dientugiadung-asp.net/src/QL_DienTuGiaDung/QL_DienTuGiaDung/Views/Product/Detail.cshtml]
-build_metadata.AdditionalFiles.TargetPath = Vmlld3NcUHJvZHVjdFxEZXRhaWwuY3NodG1s
+[C:/HocPhan/Project/New/QL_DienTuGiaDung/QL_DienTuGiaDung/Views/Admin/Partials/_NoiChien.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcQWRtaW5cUGFydGlhbHNcX05vaUNoaWVuLmNzaHRtbA==
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/cn-da22ttc-phamthevinh-dientugiadung-asp.net/src/QL_DienTuGiaDung/QL_DienTuGiaDung/Views/Product/Index.cshtml]
-build_metadata.AdditionalFiles.TargetPath = Vmlld3NcUHJvZHVjdFxJbmRleC5jc2h0bWw=
+[C:/HocPhan/Project/New/QL_DienTuGiaDung/QL_DienTuGiaDung/Views/Admin/Partials/_NoiComDien.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcQWRtaW5cUGFydGlhbHNcX05vaUNvbURpZW4uY3NodG1s
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/cn-da22ttc-phamthevinh-dientugiadung-asp.net/src/QL_DienTuGiaDung/QL_DienTuGiaDung/Views/Product/Partials/_DetailMayLanh.cshtml]
-build_metadata.AdditionalFiles.TargetPath = Vmlld3NcUHJvZHVjdFxQYXJ0aWFsc1xfRGV0YWlsTWF5TGFuaC5jc2h0bWw=
+[C:/HocPhan/Project/New/QL_DienTuGiaDung/QL_DienTuGiaDung/Views/Admin/Partials/_TiVi.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcQWRtaW5cUGFydGlhbHNcX1RpVmkuY3NodG1s
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/cn-da22ttc-phamthevinh-dientugiadung-asp.net/src/QL_DienTuGiaDung/QL_DienTuGiaDung/Views/Product/Partials/_DetailMayLocKhongKhi.cshtml]
-build_metadata.AdditionalFiles.TargetPath = Vmlld3NcUHJvZHVjdFxQYXJ0aWFsc1xfRGV0YWlsTWF5TG9jS2hvbmdLaGkuY3NodG1s
+[C:/HocPhan/Project/New/QL_DienTuGiaDung/QL_DienTuGiaDung/Views/Admin/Partials/_TuLanh.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcQWRtaW5cUGFydGlhbHNcX1R1TGFuaC5jc2h0bWw=
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/cn-da22ttc-phamthevinh-dientugiadung-asp.net/src/QL_DienTuGiaDung/QL_DienTuGiaDung/Views/Product/Partials/_DetailMayLocNuoc.cshtml]
-build_metadata.AdditionalFiles.TargetPath = Vmlld3NcUHJvZHVjdFxQYXJ0aWFsc1xfRGV0YWlsTWF5TG9jTnVvYy5jc2h0bWw=
+[C:/HocPhan/Project/New/QL_DienTuGiaDung/QL_DienTuGiaDung/Views/Admin/QuocGia.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcQWRtaW5cUXVvY0dpYS5jc2h0bWw=
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/cn-da22ttc-phamthevinh-dientugiadung-asp.net/src/QL_DienTuGiaDung/QL_DienTuGiaDung/Views/Product/Partials/_DetailMayRuaChen.cshtml]
-build_metadata.AdditionalFiles.TargetPath = Vmlld3NcUHJvZHVjdFxQYXJ0aWFsc1xfRGV0YWlsTWF5UnVhQ2hlbi5jc2h0bWw=
+[C:/HocPhan/Project/New/QL_DienTuGiaDung/QL_DienTuGiaDung/Views/Admin/SanPham.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcQWRtaW5cU2FuUGhhbS5jc2h0bWw=
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/cn-da22ttc-phamthevinh-dientugiadung-asp.net/src/QL_DienTuGiaDung/QL_DienTuGiaDung/Views/Product/Partials/_DetailNoiChien.cshtml]
-build_metadata.AdditionalFiles.TargetPath = Vmlld3NcUHJvZHVjdFxQYXJ0aWFsc1xfRGV0YWlsTm9pQ2hpZW4uY3NodG1s
+[C:/HocPhan/Project/New/QL_DienTuGiaDung/QL_DienTuGiaDung/Views/Admin/ThongTin.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcQWRtaW5cVGhvbmdUaW4uY3NodG1s
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/cn-da22ttc-phamthevinh-dientugiadung-asp.net/src/QL_DienTuGiaDung/QL_DienTuGiaDung/Views/Product/Partials/_DetailNoiComDien.cshtml]
-build_metadata.AdditionalFiles.TargetPath = Vmlld3NcUHJvZHVjdFxQYXJ0aWFsc1xfRGV0YWlsTm9pQ29tRGllbi5jc2h0bWw=
+[C:/HocPhan/Project/New/QL_DienTuGiaDung/QL_DienTuGiaDung/Views/Admin/ThuongHieu.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcQWRtaW5cVGh1b25nSGlldS5jc2h0bWw=
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/cn-da22ttc-phamthevinh-dientugiadung-asp.net/src/QL_DienTuGiaDung/QL_DienTuGiaDung/Views/Product/Partials/_DetailTiVi.cshtml]
-build_metadata.AdditionalFiles.TargetPath = Vmlld3NcUHJvZHVjdFxQYXJ0aWFsc1xfRGV0YWlsVGlWaS5jc2h0bWw=
+[C:/HocPhan/Project/New/QL_DienTuGiaDung/QL_DienTuGiaDung/Views/GioHang/Index.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcR2lvSGFuZ1xJbmRleC5jc2h0bWw=
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/cn-da22ttc-phamthevinh-dientugiadung-asp.net/src/QL_DienTuGiaDung/QL_DienTuGiaDung/Views/Product/Partials/_DetailTuLanh.cshtml]
-build_metadata.AdditionalFiles.TargetPath = Vmlld3NcUHJvZHVjdFxQYXJ0aWFsc1xfRGV0YWlsVHVMYW5oLmNzaHRtbA==
+[C:/HocPhan/Project/New/QL_DienTuGiaDung/QL_DienTuGiaDung/Views/SanPham/ChiTiet.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcU2FuUGhhbVxDaGlUaWV0LmNzaHRtbA==
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/cn-da22ttc-phamthevinh-dientugiadung-asp.net/src/QL_DienTuGiaDung/QL_DienTuGiaDung/Views/Shared/Components/CartNumberItem/Default.cshtml]
-build_metadata.AdditionalFiles.TargetPath = Vmlld3NcU2hhcmVkXENvbXBvbmVudHNcQ2FydE51bWJlckl0ZW1cRGVmYXVsdC5jc2h0bWw=
+[C:/HocPhan/Project/New/QL_DienTuGiaDung/QL_DienTuGiaDung/Views/SanPham/Index.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcU2FuUGhhbVxJbmRleC5jc2h0bWw=
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/cn-da22ttc-phamthevinh-dientugiadung-asp.net/src/QL_DienTuGiaDung/QL_DienTuGiaDung/Views/Shared/Components/DeliveryAddress/Default.cshtml]
-build_metadata.AdditionalFiles.TargetPath = Vmlld3NcU2hhcmVkXENvbXBvbmVudHNcRGVsaXZlcnlBZGRyZXNzXERlZmF1bHQuY3NodG1s
+[C:/HocPhan/Project/New/QL_DienTuGiaDung/QL_DienTuGiaDung/Views/SanPham/Partials/_MayLanh.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcU2FuUGhhbVxQYXJ0aWFsc1xfTWF5TGFuaC5jc2h0bWw=
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/cn-da22ttc-phamthevinh-dientugiadung-asp.net/src/QL_DienTuGiaDung/QL_DienTuGiaDung/Views/Shared/Components/PaymentMethod/Default.cshtml]
-build_metadata.AdditionalFiles.TargetPath = Vmlld3NcU2hhcmVkXENvbXBvbmVudHNcUGF5bWVudE1ldGhvZFxEZWZhdWx0LmNzaHRtbA==
+[C:/HocPhan/Project/New/QL_DienTuGiaDung/QL_DienTuGiaDung/Views/SanPham/Partials/_MayLocKhongKhi.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcU2FuUGhhbVxQYXJ0aWFsc1xfTWF5TG9jS2hvbmdLaGkuY3NodG1s
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/cn-da22ttc-phamthevinh-dientugiadung-asp.net/src/QL_DienTuGiaDung/QL_DienTuGiaDung/Views/Shared/Components/SiderbarProductType/Default.cshtml]
-build_metadata.AdditionalFiles.TargetPath = Vmlld3NcU2hhcmVkXENvbXBvbmVudHNcU2lkZXJiYXJQcm9kdWN0VHlwZVxEZWZhdWx0LmNzaHRtbA==
+[C:/HocPhan/Project/New/QL_DienTuGiaDung/QL_DienTuGiaDung/Views/SanPham/Partials/_MayLocNuoc.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcU2FuUGhhbVxQYXJ0aWFsc1xfTWF5TG9jTnVvYy5jc2h0bWw=
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/cn-da22ttc-phamthevinh-dientugiadung-asp.net/src/QL_DienTuGiaDung/QL_DienTuGiaDung/Views/Shared/_Footer.cshtml]
+[C:/HocPhan/Project/New/QL_DienTuGiaDung/QL_DienTuGiaDung/Views/SanPham/Partials/_MayRuaChen.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcU2FuUGhhbVxQYXJ0aWFsc1xfTWF5UnVhQ2hlbi5jc2h0bWw=
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/HocPhan/Project/New/QL_DienTuGiaDung/QL_DienTuGiaDung/Views/SanPham/Partials/_NoiChien.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcU2FuUGhhbVxQYXJ0aWFsc1xfTm9pQ2hpZW4uY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/HocPhan/Project/New/QL_DienTuGiaDung/QL_DienTuGiaDung/Views/SanPham/Partials/_NoiComDien.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcU2FuUGhhbVxQYXJ0aWFsc1xfTm9pQ29tRGllbi5jc2h0bWw=
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/HocPhan/Project/New/QL_DienTuGiaDung/QL_DienTuGiaDung/Views/SanPham/Partials/_TiVi.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcU2FuUGhhbVxQYXJ0aWFsc1xfVGlWaS5jc2h0bWw=
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/HocPhan/Project/New/QL_DienTuGiaDung/QL_DienTuGiaDung/Views/SanPham/Partials/_TuLanh.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcU2FuUGhhbVxQYXJ0aWFsc1xfVHVMYW5oLmNzaHRtbA==
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/HocPhan/Project/New/QL_DienTuGiaDung/QL_DienTuGiaDung/Views/Shared/Components/LoaiSanPhamSidebar/Default.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcU2hhcmVkXENvbXBvbmVudHNcTG9haVNhblBoYW1TaWRlYmFyXERlZmF1bHQuY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/HocPhan/Project/New/QL_DienTuGiaDung/QL_DienTuGiaDung/Views/Shared/Components/SoSanPhamTrongGio/Default.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcU2hhcmVkXENvbXBvbmVudHNcU29TYW5QaGFtVHJvbmdHaW9cRGVmYXVsdC5jc2h0bWw=
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/HocPhan/Project/New/QL_DienTuGiaDung/QL_DienTuGiaDung/Views/Shared/_Footer.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcU2hhcmVkXF9Gb290ZXIuY3NodG1s
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/cn-da22ttc-phamthevinh-dientugiadung-asp.net/src/QL_DienTuGiaDung/QL_DienTuGiaDung/Views/Shared/_Header.cshtml]
+[C:/HocPhan/Project/New/QL_DienTuGiaDung/QL_DienTuGiaDung/Views/Shared/_Header.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcU2hhcmVkXF9IZWFkZXIuY3NodG1s
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/cn-da22ttc-phamthevinh-dientugiadung-asp.net/src/QL_DienTuGiaDung/QL_DienTuGiaDung/Views/Shared/_Layout.cshtml]
+[C:/HocPhan/Project/New/QL_DienTuGiaDung/QL_DienTuGiaDung/Views/Shared/_Layout.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcU2hhcmVkXF9MYXlvdXQuY3NodG1s
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/cn-da22ttc-phamthevinh-dientugiadung-asp.net/src/QL_DienTuGiaDung/QL_DienTuGiaDung/Views/Shared/_SidebarAdmin.cshtml]
-build_metadata.AdditionalFiles.TargetPath = Vmlld3NcU2hhcmVkXF9TaWRlYmFyQWRtaW4uY3NodG1s
+[C:/HocPhan/Project/New/QL_DienTuGiaDung/QL_DienTuGiaDung/Views/Shared/_Sidebar.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcU2hhcmVkXF9TaWRlYmFyLmNzaHRtbA==
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/cn-da22ttc-phamthevinh-dientugiadung-asp.net/src/QL_DienTuGiaDung/QL_DienTuGiaDung/Views/Shared/_SidebarAdminPersonal.cshtml]
-build_metadata.AdditionalFiles.TargetPath = Vmlld3NcU2hhcmVkXF9TaWRlYmFyQWRtaW5QZXJzb25hbC5jc2h0bWw=
+[C:/HocPhan/Project/New/QL_DienTuGiaDung/QL_DienTuGiaDung/Views/Shared/_ValidationScriptsPartial.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcU2hhcmVkXF9WYWxpZGF0aW9uU2NyaXB0c1BhcnRpYWwuY3NodG1s
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/cn-da22ttc-phamthevinh-dientugiadung-asp.net/src/QL_DienTuGiaDung/QL_DienTuGiaDung/Views/Shared/_SidebarPersonal.cshtml]
-build_metadata.AdditionalFiles.TargetPath = Vmlld3NcU2hhcmVkXF9TaWRlYmFyUGVyc29uYWwuY3NodG1s
+[C:/HocPhan/Project/New/QL_DienTuGiaDung/QL_DienTuGiaDung/Views/TaiKhoan/DangKy.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcVGFpS2hvYW5cRGFuZ0t5LmNzaHRtbA==
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/cn-da22ttc-phamthevinh-dientugiadung-asp.net/src/QL_DienTuGiaDung/QL_DienTuGiaDung/Views/_ViewImports.cshtml]
+[C:/HocPhan/Project/New/QL_DienTuGiaDung/QL_DienTuGiaDung/Views/TaiKhoan/DiaChiNhanHang.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcVGFpS2hvYW5cRGlhQ2hpTmhhbkhhbmcuY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/HocPhan/Project/New/QL_DienTuGiaDung/QL_DienTuGiaDung/Views/TaiKhoan/Index.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcVGFpS2hvYW5cSW5kZXguY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/HocPhan/Project/New/QL_DienTuGiaDung/QL_DienTuGiaDung/Views/TaiKhoan/LichSuMuaHang.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcVGFpS2hvYW5cTGljaFN1TXVhSGFuZy5jc2h0bWw=
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/HocPhan/Project/New/QL_DienTuGiaDung/QL_DienTuGiaDung/Views/TaiKhoan/ThongTin.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcVGFpS2hvYW5cVGhvbmdUaW4uY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/HocPhan/Project/New/QL_DienTuGiaDung/QL_DienTuGiaDung/Views/TaiKhoan/XacThucOTP.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcVGFpS2hvYW5cWGFjVGh1Y09UUC5jc2h0bWw=
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/HocPhan/Project/New/QL_DienTuGiaDung/QL_DienTuGiaDung/Views/_ViewImports.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcX1ZpZXdJbXBvcnRzLmNzaHRtbA==
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/cn-da22ttc-phamthevinh-dientugiadung-asp.net/src/QL_DienTuGiaDung/QL_DienTuGiaDung/Views/_ViewStart.cshtml]
+[C:/HocPhan/Project/New/QL_DienTuGiaDung/QL_DienTuGiaDung/Views/_ViewStart.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcX1ZpZXdTdGFydC5jc2h0bWw=
 build_metadata.AdditionalFiles.CssScope = 

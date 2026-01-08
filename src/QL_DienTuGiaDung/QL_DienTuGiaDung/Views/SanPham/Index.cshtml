@@ -1,0 +1,125 @@
+﻿@using System.Globalization
+@model List<SanPham>
+
+@section Styles {
+    <link rel="stylesheet" href="~/css/sanpham.css" asp-append-version="true"/>
+}
+
+@{
+    var message = TempData["Message"] as string;
+
+    int pageSize = 10;
+    var page = Context.Request.Query["trang"];
+    int currentPage = 1;
+
+    if (!string.IsNullOrEmpty(page))
+    {
+        currentPage = int.Parse(page!);
+    }
+
+    var pageProducts = Model
+    .Skip((currentPage - 1) * pageSize)
+    .Take(pageSize)
+    .ToList();
+
+    int totalPage = (int)Math.Ceiling((double)Model.Count / pageSize);
+
+    int startPage = Math.Max(2, currentPage - 1);
+    int endPage = Math.Min(totalPage - 1, currentPage + 1);
+
+    if (startPage >= endPage && endPage < totalPage - 1)
+    {
+        endPage = startPage + 1;
+    }
+}
+
+@if (pageProducts.Count > 0)
+{
+    <div class="grid_product">
+            @foreach (var item in pageProducts)
+            {
+                <a asp-action="@(item.SoLuongSP > 0 ? "ChiTiet" : "")" asp-route-masp="@(item.SoLuongSP > 0 ? item.MaSP : "")" class="product_card">
+                    @if (item.SoLuongSP <= 0) 
+                    {
+                        <div class="product_card_out_stock">
+                            <p>Hết hàng</p>
+                        </div>
+                    }
+                    <img src="@(string.IsNullOrEmpty(item.UrlAnh) ? "/images/no_img.png" : item.UrlAnh)" alt="Ảnh sản phẩm">
+                    <h3>@item.TenSP</h3>
+                    @if (item.MucGiamGiaSP > 0) {
+                        <div class="product_card_row">
+                            <del>@item.GiaGocSauThueSP.ToString("N0", new CultureInfo("vi-VN"))</del>
+                            <span class="product_card_discount_rate">-@item.MucGiamGiaSP%</span>
+                        </div>
+                    }
+                    <div class="product_card_row">
+                        <span class="product_card_discount_price">@item.GiaSauGiamVaThueSP.ToString("N0", new CultureInfo("vi-VN"))</span>
+                    </div>
+                    <div class="product_card_row bottom">
+                        <div class="product_card_row_group">
+                            @if (item.DiemTrungBinhSP > 0) {
+                                <span>@item.DiemTrungBinhSP.ToString("0.#")</span>
+                                <span class="material-symbols-outlined">star</span>
+                            }
+                        </div>
+                        @if (item.SoLuongDaBanSP > 0) 
+                        {
+                            <span>Đã bán @item.SoLuongDaBanSP</span>
+                        }
+                    </div>
+                </a>
+            }
+    </div>
+
+    <div class="product_pagination" style="margin-top: @(totalPage > 1 ? 12 : 0)px;">
+        @if (currentPage > 1)
+        {
+            <a asp-action="Index" asp-route-trang="@(currentPage - 1)">
+                <span class="material-symbols-outlined">keyboard_arrow_left</span>
+            </a>
+        }
+
+        @if (totalPage > 1)
+        {
+            <a class="@(currentPage == 1 ? "active" : "")" asp-action="Index" asp-route-trang="1">1</a>
+        }
+        
+        @if (currentPage - 1 > 2)
+        {
+            <span>. . .</span>
+        }
+
+        @for (int i = startPage; i <= endPage; i++)
+        {
+            <a class="@(i == currentPage ? "active" : "")" asp-action="Index" asp-route-trang="@i">@i</a>
+        }
+
+        @if (totalPage > 4 && currentPage < totalPage - 2)
+        {
+            <span>. . .</span>
+        }
+
+        @if (totalPage > 1)
+        {
+            <a class="@(totalPage == currentPage ? "active" : "")" asp-action="Index" asp-route-trang="@totalPage">@totalPage</a>
+        }
+
+        @if (currentPage < totalPage)
+        {
+            <a asp-action="Index" asp-route-trang="@(currentPage + 1)">
+                <span class="material-symbols-outlined">keyboard_arrow_right</span>
+            </a>
+        }
+    </div>
+} else
+{
+    <p>Danh sách sản phẩm hiện đang trống</p>
+}
+
+@if (!string.IsNullOrEmpty(message))
+{
+    <script>
+        alert('@Html.Raw(message)');
+    </script>
+}

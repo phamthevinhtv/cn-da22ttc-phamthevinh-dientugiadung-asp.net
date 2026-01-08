@@ -1,0 +1,69 @@
+@model List<LoaiSanPham>
+@{
+    var message = TempData["Message"] as string;
+    var error = TempData["Error"] as string;
+}
+
+@section Styles {
+    <link rel="stylesheet" href="~/css/admin.css" asp-append-version="true"/>
+}
+
+<div class="admin-product-wrapper">
+    <div style="display: flex; justify-content: end; align-items: center; margin-bottom: 12px; gap: 12px;">
+        <a asp-action="ChiTietLoaiSanPham" asp-controller="Admin" class="button">Thêm loại sản phẩm</a>
+    </div>
+
+    @if (Model.Count > 0)
+    {
+        <table class="admin-table">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Tên loại sản phẩm</th>
+                    <th>Thuế GTGT (%)</th>
+                    <th>Trạng thái</th>
+                    <th>Thao tác</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var loaiSanPham in Model)
+                { 
+                    <tr>
+                        <td>@loaiSanPham.MaLSP</td>
+                        <td>@loaiSanPham.TenLSP</td>
+                        <td>@loaiSanPham.ThueGTGTLSP.ToString("N0")</td>
+                        <td>@(loaiSanPham.TrangThaiLSP == 1 ? "Hiển thị" : "Ẩn")</td>
+                        <td>
+                            <div class="actions">
+                                <a asp-action="ChiTietLoaiSanPham" asp-controller="Admin" asp-route-maLSP="@loaiSanPham.MaLSP" class="button button-edit">Sửa</a>
+                                @{
+                                    var coTheSuaXoa = ViewBag.CoTheSuaXoa as Dictionary<int, bool>;
+                                    bool coTheXoa = coTheSuaXoa?.ContainsKey(loaiSanPham.MaLSP) == true && coTheSuaXoa[loaiSanPham.MaLSP];
+                                }
+                                @if (coTheXoa)
+                                {
+                                    <form asp-action="XoaLoaiSanPham" asp-controller="Admin" method="post" style="display: inline;" 
+                                          onsubmit="return confirm('Bạn có chắc muốn xóa loại sản phẩm này?')">
+                                        <input type="hidden" name="maLSP" value="@loaiSanPham.MaLSP" />
+                                        <button type="submit" class="button button-delete">Xóa</button>
+                                    </form>
+                                }
+                            </div>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    } 
+    else
+    {
+        <p>Danh sách loại sản phẩm hiện đang trống</p>
+    }
+</div>
+
+@if (!string.IsNullOrEmpty(message))
+{
+    <script>
+        alert(@Html.Raw(Json.Serialize(message)));
+    </script>
+}
